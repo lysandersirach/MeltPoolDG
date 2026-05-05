@@ -74,6 +74,19 @@ namespace MeltPoolDG::CompressibleFlow
     }
 
     /**
+     * @brief Estimate the eigenvalues of the Jacobian matrix.
+     *
+     * @param time_step The current time step size.
+     * @param max_eigenvalues The maximum number of eigenvalues to estimate.
+     * @return A vector of complex eigenvalues.
+     */
+    std::vector<std::complex<number>>
+    estimate_jacobian_eigenvalues(const number time_step) const
+    {
+      return operation_pimpl->estimate_jacobian_eigenvalues(time_step);
+    }
+
+    /**
      * @brief Attach the solution to the passed data out object.
      *
      * @param data_out Object to which the solution vector is attached.
@@ -244,6 +257,9 @@ namespace MeltPoolDG::CompressibleFlow
 
       virtual const dealii::DoFHandler<dim> &
       get_dof_handler() const = 0;
+
+      virtual std::vector<std::complex<number>>
+      estimate_jacobian_eigenvalues(const number time_step) const = 0;
     };
 
     /**
@@ -331,6 +347,11 @@ namespace MeltPoolDG::CompressibleFlow
       get_dof_handler() const override
       {
         return operation->get_dof_handler();
+      }
+      std::vector<std::complex<number>>
+      estimate_jacobian_eigenvalues(const number time_step) const override
+      {
+        return operation->estimate_jacobian_eigenvalues(time_step);
       }
 
     private:

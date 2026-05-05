@@ -2,7 +2,6 @@
 
 #include <meltpooldg/compressible_flow/multiphase_level_set_advection.hpp>
 #include <meltpooldg/compressible_flow/multiphase_operation.hpp>
-#include <meltpooldg/compressible_flow/operation_type_erasure.hpp>
 #include <meltpooldg/core/simulation_base.hpp>
 #include <meltpooldg/post_processing/postprocessor.hpp>
 #include <meltpooldg/time_integration/time_iterator.hpp>
@@ -63,7 +62,8 @@ namespace MeltPoolDG::Multiphase
     std::shared_ptr<TimeIntegration::TimeIterator<number>> time_iterator;
 
     /// Compressible multiphase operation object
-    CompressibleFlow::OperationTypeErasure<dim, number> comp_multiphase_operation;
+    std::unique_ptr<Multiphase::CompressibleMultiphaseOperation<dim, number>>
+      comp_multiphase_operation;
 
     /// Pointer to the profiling object
     std::unique_ptr<Profiling::ProfilingMonitor<number>> profiling_monitor;

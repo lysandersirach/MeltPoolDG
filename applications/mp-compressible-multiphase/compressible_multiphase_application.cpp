@@ -31,13 +31,14 @@ namespace MeltPoolDG::Multiphase
         // use CFL condition to compute time step size if required
         if (simulation_case->parameters.flow.do_cfl_time_stepping)
           time_iterator->set_current_time_increment(
-            comp_multiphase_operation.compute_time_step_size(), std::numeric_limits<number>::max());
+            comp_multiphase_operation->compute_time_step_size(),
+            std::numeric_limits<number>::max());
 
         time_iterator->compute_next_time_increment();
         time_iterator->print_me(scratch_data->get_pcout(1));
 
-        comp_multiphase_operation.solve(time_iterator->get_current_time(),
-                                        time_iterator->get_current_time_increment());
+        comp_multiphase_operation->solve(time_iterator->get_current_time(),
+                                         time_iterator->get_current_time_increment());
 
         // do level-set advection and reinitialization
         update_level_set(time_iterator->get_current_time_increment());
@@ -107,7 +108,7 @@ namespace MeltPoolDG::Multiphase
   void
   CompressibleMultiphaseApplication<dim, number>::setup_dof_system()
   {
-    comp_multiphase_operation.distribute_dofs(dof_handler);
+    comp_multiphase_operation->distribute_dofs(dof_handler);
 
     scratch_data->create_partitioning();
 
@@ -130,7 +131,7 @@ namespace MeltPoolDG::Multiphase
                                   scratch_data->get_min_cell_size(),
                                   scratch_data->get_max_cell_size());
 
-    comp_multiphase_operation.reinit();
+    comp_multiphase_operation->reinit();
   }
 
   template <int dim, typename number>
@@ -170,25 +171,21 @@ namespace MeltPoolDG::Multiphase
       simulation_case->parameters.time_stepping);
 
     // initialize compressible multiphase operation
-    std::unique_ptr<CompressibleMultiphaseOperation<dim, number>> operation =
-      std::make_unique<CompressibleMultiphaseOperation<dim, number>>(
-        *scratch_data,
-        simulation_case->parameters.flow,
-        simulation_case->parameters.material_gas,
-        simulation_case->parameters.material_liquid,
-        simulation_case->parameters.phase_change,
-        simulation_case->parameters.cut,
-        simulation_case->parameters.phase_coupling,
-        simulation_case->parameters.darcy_damping,
-        *time_iterator,
-        [this]() { this->setup_dof_system(); },
-        level_set,
-        comp_multiphase_dof_idx,
-        level_set_dof_idx,
-        comp_multiphase_quad_idx);
-
-    comp_multiphase_operation =
-      MeltPoolDG::CompressibleFlow::OperationTypeErasure<dim, number>(std::move(operation));
+    comp_multiphase_operation = std::make_unique<CompressibleMultiphaseOperation<dim, number>>(
+      *scratch_data,
+      simulation_case->parameters.flow,
+      simulation_case->parameters.material_gas,
+      simulation_case->parameters.material_liquid,
+      simulation_case->parameters.phase_change,
+      simulation_case->parameters.cut,
+      simulation_case->parameters.phase_coupling,
+      simulation_case->parameters.darcy_damping,
+      *time_iterator,
+      [this]() { this->setup_dof_system(); },
+      level_set,
+      comp_multiphase_dof_idx,
+      level_set_dof_idx,
+      comp_multiphase_quad_idx);
 
     // set up level-set for cutDG
     // currently, we use a continuous level-set field with same element degree as the flow field
@@ -204,10 +201,10 @@ namespace MeltPoolDG::Multiphase
 
     // set boundary conditions
     const std::string operation_name = "compressible_multiphase_flow";
-    comp_multiphase_operation.set_boundary_conditions(simulation_case, operation_name);
+    comp_multiphase_operation->set_boundary_conditions(simulation_case, operation_name);
 
     // set initial condition for the flow field
-    comp_multiphase_operation.set_initial_condition(
+    comp_multiphase_operation->set_initial_condition(
       *simulation_case->get_initial_condition("compressible_multiphase_flow"));
 
     // set body force
@@ -218,7 +215,7 @@ namespace MeltPoolDG::Multiphase
             dim > 2 ?
               std::vector<number>({0., 0., -simulation_case->parameters.flow.gravity_constant}) :
               std::vector<number>({0., -simulation_case->parameters.flow.gravity_constant}));
-        comp_multiphase_operation.set_body_force(std::move(body_force));
+        comp_multiphase_operation->set_body_force(std::move(body_force));
       }
 
     // initialize postprocessor
@@ -247,7 +244,7 @@ namespace MeltPoolDG::Multiphase
       return;
 
     const auto attach_output_vectors = [&](GenericDataOut<dim, number> &data_out) {
-      comp_multiphase_operation.attach_output_vectors(data_out);
+      comp_multiphase_operation->attach_output_vectors(data_out);
     };
 
     GenericDataOut<dim, number> generic_data_out(

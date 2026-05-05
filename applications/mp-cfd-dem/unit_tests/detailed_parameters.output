@@ -488,81 +488,120 @@
                 "value": "false",
                 "default_value": "false",
                 "documentation": "Set this parameter to true to activate paraview output.",
-                "pattern": "110",
+                "pattern": "114",
                 "pattern_description": "[Bool]",
-                "actions": "110"
+                "actions": "114"
             },
             "filename":
             {
                 "value": "solution",
                 "default_value": "solution",
                 "documentation": "Sets the base name for paraview output files.",
-                "pattern": "111",
+                "pattern": "115",
                 "pattern_description": "[Anything]",
-                "actions": "111"
+                "actions": "115"
             },
             "n digits timestep":
             {
                 "value": "4",
                 "default_value": "4",
                 "documentation": "Number of digits for the frame number of the vtu-file.",
-                "pattern": "112",
+                "pattern": "116",
                 "pattern_description": "[Integer range -2147483648...2147483647 (inclusive)]",
-                "actions": "112"
+                "actions": "116"
             },
             "print boundary id":
             {
                 "value": "false",
                 "default_value": "false",
                 "documentation": "Set this parameter to true to output a vtu-file with the boundary id.",
-                "pattern": "113",
+                "pattern": "117",
                 "pattern_description": "[Bool]",
-                "actions": "113"
+                "actions": "117"
             },
             "output subdomains":
             {
                 "value": "false",
                 "default_value": "false",
                 "documentation": "Set this parameter to true to output the subdomain ranks.",
-                "pattern": "114",
+                "pattern": "118",
                 "pattern_description": "[Bool]",
-                "actions": "114"
+                "actions": "118"
             },
             "output material id":
             {
                 "value": "false",
                 "default_value": "false",
                 "documentation": "Set to true to output the material id.",
-                "pattern": "115",
+                "pattern": "119",
                 "pattern_description": "[Bool]",
-                "actions": "115"
+                "actions": "119"
             },
             "write higher order cells":
             {
                 "value": "true",
                 "default_value": "true",
                 "documentation": "Set this parameter to false to write bi- or trilinear data only. Set this parameter to true to write higher order cell data. Note: higher order cell data can only be written for hexahedron meshes and 2 or 3 dimensions.",
-                "pattern": "116",
+                "pattern": "120",
                 "pattern_description": "[Bool]",
-                "actions": "116"
+                "actions": "120"
             },
             "n groups":
             {
                 "value": "1",
                 "default_value": "1",
                 "documentation": "Number of parallel written vtu-files.",
-                "pattern": "117",
+                "pattern": "121",
                 "pattern_description": "[Integer range -2147483648...2147483647 (inclusive)]",
-                "actions": "117"
+                "actions": "121"
             },
             "n patches":
             {
                 "value": "0",
                 "default_value": "0",
                 "documentation": "Control number of patches to enable high-order.",
-                "pattern": "118",
+                "pattern": "122",
                 "pattern_description": "[Integer range -2147483648...2147483647 (inclusive)]",
-                "actions": "118"
+                "actions": "122"
+            }
+        },
+        "eigenvalues":
+        {
+            "enable":
+            {
+                "value": "false",
+                "default_value": "false",
+                "documentation": "Whether to output eigenvalues of the Jacobian.",
+                "pattern": "50",
+                "pattern_description": "[Bool]",
+                "actions": "50"
+            },
+            "file name":
+            {
+                "value": "eigenvalues",
+                "default_value": "eigenvalues",
+                "documentation": "Name of the file to which eigenvalues are written. A file ending is not required and will be added automatically.",
+                "pattern": "51",
+                "pattern_description": "[Anything]",
+                "actions": "51"
+            },
+            "print summary":
+            {
+                "value": "false",
+                "default_value": "false",
+                "documentation": "Whether to print a summary of the eigenvalues to the console on output time steps.",
+                "pattern": "52",
+                "pattern_description": "[Bool]",
+                "actions": "52"
+            },
+            "number of eigenvalues":
+            {
+                "value": "100",
+                "default_value": "100",
+                "documentation": "Number of eigenvalues to compute if output_eigenvalues is true.",
+                "pattern": "53",
+                "pattern_description": "[Integer]",
+                "actions": "53"
             }
         },
         "directory":
@@ -570,45 +609,45 @@
             "value": ".\/",
             "default_value": ".\/",
             "documentation": "Sets the base directory for all output.",
-            "pattern": "105",
+            "pattern": "109",
             "pattern_description": "[Anything]",
-            "actions": "105"
+            "actions": "109"
         },
         "write frequency":
         {
             "value": "1",
             "default_value": "1",
             "documentation": "Every n timestep that should be written",
-            "pattern": "106",
+            "pattern": "110",
             "pattern_description": "[Integer range -2147483648...2147483647 (inclusive)]",
-            "actions": "106"
+            "actions": "110"
         },
         "write time step size":
         {
             "value": "1.79769e+308",
             "default_value": "1.79769e+308",
             "documentation": "Write output output every given time step. If this parameter is set, the output write frequency is deactivated.",
-            "pattern": "107",
+            "pattern": "111",
             "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-            "actions": "107"
+            "actions": "111"
         },
         "output variables":
         {
             "value": "all",
             "default_value": "all",
             "documentation": "Specify variables that you request to output.",
-            "pattern": "108",
+            "pattern": "112",
             "pattern_description": "[List of <[Anything]> of length 0...4294967295 (inclusive)]",
-            "actions": "108"
+            "actions": "112"
         },
         "do user defined postprocessing":
         {
             "value": "false",
             "default_value": "false",
             "documentation": "Set this parameter to true to enable user defined postprocessing.",
-            "pattern": "109",
+            "pattern": "113",
             "pattern_description": "[Bool]",
-            "actions": "109"
+            "actions": "113"
         },
         "particles":
         {
@@ -617,18 +656,18 @@
                 "value": "false",
                 "default_value": "false",
                 "documentation": "Set this parameter to true to activate particle paraview output.",
-                "pattern": "119",
+                "pattern": "123",
                 "pattern_description": "[Bool]",
-                "actions": "119"
+                "actions": "123"
             },
             "filename":
             {
                 "value": "particle",
                 "default_value": "particle",
                 "documentation": "Sets the base name for particle output files.",
-                "pattern": "120",
+                "pattern": "124",
                 "pattern_description": "[Anything]",
-                "actions": "120"
+                "actions": "124"
             }
         }
     },
@@ -641,36 +680,36 @@
                 "value": "1",
                 "default_value": "1",
                 "documentation": "Number of different species in the fluid phase.",
-                "pattern": "50",
+                "pattern": "54",
                 "pattern_description": "[Integer range 1...2 (inclusive)]",
-                "actions": "50"
+                "actions": "54"
             },
             "eos type":
             {
                 "value": "ideal_gas",
                 "default_value": "ideal_gas",
                 "documentation": "Type of equation of state. The options are \"ideal_gas\", \"stiffened_gas\" and \"noble_abel_stiffened_gas\".",
-                "pattern": "51",
+                "pattern": "55",
                 "pattern_description": "[Selection ideal_gas|stiffened_gas|noble_abel_stiffened_gas ]",
-                "actions": "51"
+                "actions": "55"
             },
             "reference density":
             {
                 "value": "1",
                 "default_value": "1",
                 "documentation": "Reference density for computing the interior penalty factor. A good first guess is to choose a value in the order of the fluid density. If instabilities occur, the reference density can be decreased, so that the symmetric interior penalization is increased.",
-                "pattern": "52",
+                "pattern": "56",
                 "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                "actions": "52"
+                "actions": "56"
             },
             "reference dynamic viscosity":
             {
                 "value": "0.000625",
                 "default_value": "0.000625",
                 "documentation": "Reference dynamic viscosity for computing the interior penalty factor. A good first guess is to choose a value in the order of the fluid dynamic viscosity. If instabilities occur, the reference dynamic viscosity can be increased, so that the symmetric interior penalization is increased.",
-                "pattern": "53",
+                "pattern": "57",
                 "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                "actions": "53"
+                "actions": "57"
             },
             "species 1":
             {
@@ -679,63 +718,63 @@
                     "value": "species",
                     "default_value": "species",
                     "documentation": "Name of the species used for output purposes.",
-                    "pattern": "54",
+                    "pattern": "58",
                     "pattern_description": "[Anything]",
-                    "actions": "54"
+                    "actions": "58"
                 },
                 "specific isobaric heat":
                 {
                     "value": "1000",
                     "default_value": "1000",
                     "documentation": "Specific isobaric heat.",
-                    "pattern": "55",
+                    "pattern": "59",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "55"
+                    "actions": "59"
                 },
                 "dynamic viscosity":
                 {
                     "value": "0.000625",
                     "default_value": "0.000625",
                     "documentation": "Dynamic viscosity.",
-                    "pattern": "56",
+                    "pattern": "60",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "56"
+                    "actions": "60"
                 },
                 "gamma":
                 {
                     "value": "1.4",
                     "default_value": "1.4",
                     "documentation": "Isentropic exponent, i.e., ratio of specific heat (c_p\/c_v).",
-                    "pattern": "57",
+                    "pattern": "61",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "57"
+                    "actions": "61"
                 },
                 "specific gas constant":
                 {
                     "value": "287.1",
                     "default_value": "287.1",
                     "documentation": "Specific gas constant.",
-                    "pattern": "58",
+                    "pattern": "62",
                     "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                    "actions": "58"
+                    "actions": "62"
                 },
                 "thermal conductivity":
                 {
                     "value": "1.79769e+308",
                     "default_value": "1.79769e+308",
                     "documentation": "Thermal conductivity.",
-                    "pattern": "59",
+                    "pattern": "63",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "59"
+                    "actions": "63"
                 },
                 "molar mass":
                 {
                     "value": "1.79769e+308",
                     "default_value": "1.79769e+308",
                     "documentation": "Molar mass.",
-                    "pattern": "60",
+                    "pattern": "64",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "60"
+                    "actions": "64"
                 },
                 "equation of state":
                 {
@@ -744,27 +783,27 @@
                         "value": "1.79769e+308",
                         "default_value": "1.79769e+308",
                         "documentation": "Numerical EOS parameter to model the molecular attraction within condensed matter. The variable is required for the stiffened gas EOS and the Noble-Abel stiffened gas EOS. The minimum value is 0.",
-                        "pattern": "61",
+                        "pattern": "65",
                         "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                        "actions": "61"
+                        "actions": "65"
                     },
                     "b":
                     {
                         "value": "1.79769e+308",
                         "default_value": "1.79769e+308",
                         "documentation": "Numerical EOS parameter to model the covolume of the fluid, i.e., the exclude volume due to the finite size of the molecules. The variable is required for the Noble-Abel stiffened gas EOS. The minimum value is 0.",
-                        "pattern": "62",
+                        "pattern": "66",
                         "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                        "actions": "62"
+                        "actions": "66"
                     },
                     "q":
                     {
                         "value": "2.22507e-308",
                         "default_value": "2.22507e-308",
                         "documentation": "Numerical EOS parameter to model the 'heat bound', i.e., the energy due to chemical bounds, hydrogen bondings, latent heat,.... The variable is required for the Noble-Abel stiffened gas EOS. The maximum value is 0.",
-                        "pattern": "63",
+                        "pattern": "67",
                         "pattern_description": "[Double]",
-                        "actions": "63"
+                        "actions": "67"
                     }
                 }
             },
@@ -773,63 +812,63 @@
                 "value": "species",
                 "default_value": "species",
                 "documentation": "Name of the species used for output purposes.",
-                "pattern": "64",
+                "pattern": "68",
                 "pattern_description": "[Anything]",
-                "actions": "64"
+                "actions": "68"
             },
             "specific isobaric heat":
             {
                 "value": "1000",
                 "default_value": "1000",
                 "documentation": "Specific isobaric heat.",
-                "pattern": "65",
+                "pattern": "69",
                 "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                "actions": "65"
+                "actions": "69"
             },
             "dynamic viscosity":
             {
                 "value": "0.000625",
                 "default_value": "0.000625",
                 "documentation": "Dynamic viscosity.",
-                "pattern": "66",
+                "pattern": "70",
                 "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                "actions": "66"
+                "actions": "70"
             },
             "gamma":
             {
                 "value": "1.4",
                 "default_value": "1.4",
                 "documentation": "Isentropic exponent, i.e., ratio of specific heat (c_p\/c_v).",
-                "pattern": "67",
+                "pattern": "71",
                 "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                "actions": "67"
+                "actions": "71"
             },
             "specific gas constant":
             {
                 "value": "287.1",
                 "default_value": "287.1",
                 "documentation": "Specific gas constant.",
-                "pattern": "68",
+                "pattern": "72",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "68"
+                "actions": "72"
             },
             "thermal conductivity":
             {
                 "value": "1.79769e+308",
                 "default_value": "1.79769e+308",
                 "documentation": "Thermal conductivity.",
-                "pattern": "69",
+                "pattern": "73",
                 "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                "actions": "69"
+                "actions": "73"
             },
             "molar mass":
             {
                 "value": "1.79769e+308",
                 "default_value": "1.79769e+308",
                 "documentation": "Molar mass.",
-                "pattern": "70",
+                "pattern": "74",
                 "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                "actions": "70"
+                "actions": "74"
             },
             "equation of state":
             {
@@ -838,27 +877,27 @@
                     "value": "1.79769e+308",
                     "default_value": "1.79769e+308",
                     "documentation": "Numerical EOS parameter to model the molecular attraction within condensed matter. The variable is required for the stiffened gas EOS and the Noble-Abel stiffened gas EOS. The minimum value is 0.",
-                    "pattern": "71",
+                    "pattern": "75",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "71"
+                    "actions": "75"
                 },
                 "b":
                 {
                     "value": "1.79769e+308",
                     "default_value": "1.79769e+308",
                     "documentation": "Numerical EOS parameter to model the covolume of the fluid, i.e., the exclude volume due to the finite size of the molecules. The variable is required for the Noble-Abel stiffened gas EOS. The minimum value is 0.",
-                    "pattern": "72",
+                    "pattern": "76",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "72"
+                    "actions": "76"
                 },
                 "q":
                 {
                     "value": "2.22507e-308",
                     "default_value": "2.22507e-308",
                     "documentation": "Numerical EOS parameter to model the 'heat bound', i.e., the energy due to chemical bounds, hydrogen bondings, latent heat,.... The variable is required for the Noble-Abel stiffened gas EOS. The maximum value is 0.",
-                    "pattern": "73",
+                    "pattern": "77",
                     "pattern_description": "[Double]",
-                    "actions": "73"
+                    "actions": "77"
                 }
             },
             "species 2":
@@ -868,63 +907,63 @@
                     "value": "species",
                     "default_value": "species",
                     "documentation": "Name of the species used for output purposes.",
-                    "pattern": "74",
+                    "pattern": "78",
                     "pattern_description": "[Anything]",
-                    "actions": "74"
+                    "actions": "78"
                 },
                 "specific isobaric heat":
                 {
                     "value": "1000",
                     "default_value": "1000",
                     "documentation": "Specific isobaric heat.",
-                    "pattern": "75",
+                    "pattern": "79",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "75"
+                    "actions": "79"
                 },
                 "dynamic viscosity":
                 {
                     "value": "0.000625",
                     "default_value": "0.000625",
                     "documentation": "Dynamic viscosity.",
-                    "pattern": "76",
+                    "pattern": "80",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "76"
+                    "actions": "80"
                 },
                 "gamma":
                 {
                     "value": "1.4",
                     "default_value": "1.4",
                     "documentation": "Isentropic exponent, i.e., ratio of specific heat (c_p\/c_v).",
-                    "pattern": "77",
+                    "pattern": "81",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "77"
+                    "actions": "81"
                 },
                 "specific gas constant":
                 {
                     "value": "287.1",
                     "default_value": "287.1",
                     "documentation": "Specific gas constant.",
-                    "pattern": "78",
+                    "pattern": "82",
                     "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                    "actions": "78"
+                    "actions": "82"
                 },
                 "thermal conductivity":
                 {
                     "value": "1.79769e+308",
                     "default_value": "1.79769e+308",
                     "documentation": "Thermal conductivity.",
-                    "pattern": "79",
+                    "pattern": "83",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "79"
+                    "actions": "83"
                 },
                 "molar mass":
                 {
                     "value": "1.79769e+308",
                     "default_value": "1.79769e+308",
                     "documentation": "Molar mass.",
-                    "pattern": "80",
+                    "pattern": "84",
                     "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                    "actions": "80"
+                    "actions": "84"
                 },
                 "equation of state":
                 {
@@ -933,27 +972,27 @@
                         "value": "1.79769e+308",
                         "default_value": "1.79769e+308",
                         "documentation": "Numerical EOS parameter to model the molecular attraction within condensed matter. The variable is required for the stiffened gas EOS and the Noble-Abel stiffened gas EOS. The minimum value is 0.",
-                        "pattern": "81",
+                        "pattern": "85",
                         "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                        "actions": "81"
+                        "actions": "85"
                     },
                     "b":
                     {
                         "value": "1.79769e+308",
                         "default_value": "1.79769e+308",
                         "documentation": "Numerical EOS parameter to model the covolume of the fluid, i.e., the exclude volume due to the finite size of the molecules. The variable is required for the Noble-Abel stiffened gas EOS. The minimum value is 0.",
-                        "pattern": "82",
+                        "pattern": "86",
                         "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                        "actions": "82"
+                        "actions": "86"
                     },
                     "q":
                     {
                         "value": "2.22507e-308",
                         "default_value": "2.22507e-308",
                         "documentation": "Numerical EOS parameter to model the 'heat bound', i.e., the energy due to chemical bounds, hydrogen bondings, latent heat,.... The variable is required for the Noble-Abel stiffened gas EOS. The maximum value is 0.",
-                        "pattern": "83",
+                        "pattern": "87",
                         "pattern_description": "[Double]",
-                        "actions": "83"
+                        "actions": "87"
                     }
                 }
             },
@@ -966,27 +1005,27 @@
                         "value": "1",
                         "default_value": "1",
                         "documentation": "Number of the first species in the interaction pair.",
-                        "pattern": "84",
+                        "pattern": "88",
                         "pattern_description": "[Integer range 1...2 (inclusive)]",
-                        "actions": "84"
+                        "actions": "88"
                     },
                     "species 2":
                     {
                         "value": "2",
                         "default_value": "2",
                         "documentation": "Number of the second species in the interaction pair.",
-                        "pattern": "85",
+                        "pattern": "89",
                         "pattern_description": "[Integer range 1...2 (inclusive)]",
-                        "actions": "85"
+                        "actions": "89"
                     },
                     "diffusion coefficient":
                     {
                         "value": "0",
                         "default_value": "0",
                         "documentation": "Diffusion coefficient for the interaction between the two species.",
-                        "pattern": "86",
+                        "pattern": "90",
                         "pattern_description": "[Double 0...MAX_DOUBLE (inclusive)]",
-                        "actions": "86"
+                        "actions": "90"
                     }
                 }
             }
@@ -999,45 +1038,45 @@
             "value": "0",
             "default_value": "0",
             "documentation": "Defines the start time for the solution of the levelset problem",
-            "pattern": "87",
+            "pattern": "91",
             "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-            "actions": "87"
+            "actions": "91"
         },
         "end time":
         {
             "value": "1",
             "default_value": "1",
             "documentation": "Sets the end time for the solution of the levelset problem",
-            "pattern": "88",
+            "pattern": "92",
             "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-            "actions": "88"
+            "actions": "92"
         },
         "time step size":
         {
             "value": "0.01",
             "default_value": "0.01",
             "documentation": "Sets the step size for time stepping. For non-uniform time stepping, this parameter determines the size of the first time step.",
-            "pattern": "89",
+            "pattern": "93",
             "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-            "actions": "89"
+            "actions": "93"
         },
         "max n steps":
         {
             "value": "10000000",
             "default_value": "10000000",
             "documentation": "Sets the maximum number of melt_pool steps",
-            "pattern": "90",
+            "pattern": "94",
             "pattern_description": "[Integer]",
-            "actions": "90"
+            "actions": "94"
         },
         "time step size function":
         {
             "value": "0.0*t",
             "default_value": "0.0*t",
             "documentation": "Set an analytical function to determine the time step size. For the prediction of the new time increment, the old time is used.",
-            "pattern": "91",
+            "pattern": "95",
             "pattern_description": "[Anything]",
-            "actions": "91"
+            "actions": "95"
         }
     },
     "obstacles":
@@ -1047,18 +1086,18 @@
             "value": "false",
             "default_value": "false",
             "documentation": "Set to true if obstacles shall be stationary.",
-            "pattern": "92",
+            "pattern": "96",
             "pattern_description": "[Bool]",
-            "actions": "92"
+            "actions": "96"
         },
         "obstacle state input file":
         {
             "value": "",
             "default_value": "",
             "documentation": "File in which the obstacle initial state data is stored.",
-            "pattern": "93",
+            "pattern": "97",
             "pattern_description": "[Anything]",
-            "actions": "93"
+            "actions": "97"
         },
         "amr":
         {
@@ -1067,27 +1106,27 @@
                 "value": "false",
                 "default_value": "false",
                 "documentation": "If true and AMR is enabled, regions around obstacles are adaptively refined according to the specified refinement parameters.",
-                "pattern": "94",
+                "pattern": "98",
                 "pattern_description": "[Bool]",
-                "actions": "94"
+                "actions": "98"
             },
             "inner surface distance":
             {
                 "value": "1",
                 "default_value": "1",
                 "documentation": "Fraction of a reference length (e.g., particle radius) used to determine the distance from the obstacle surface within which cells inside the obstacles are refined.",
-                "pattern": "95",
+                "pattern": "99",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "95"
+                "actions": "99"
             },
             "outer surface distance":
             {
                 "value": "1",
                 "default_value": "1",
                 "documentation": "Fraction of a reference length (e.g., particle radius) used to determine the distance from the obstacle surface within which cells outside the obstacles are refined.",
-                "pattern": "96",
+                "pattern": "100",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "96"
+                "actions": "100"
             }
         },
         "cohesive forces":
@@ -1097,27 +1136,27 @@
                 "value": "0",
                 "default_value": "0",
                 "documentation": "Hamaker constant used in the van der Waals force calculation for all particles.",
-                "pattern": "97",
+                "pattern": "101",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "97"
+                "actions": "101"
             },
             "surface energy":
             {
                 "value": "0",
                 "default_value": "0",
                 "documentation": "Surface energy used in the pull-off force calculation for all particles.",
-                "pattern": "98",
+                "pattern": "102",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "98"
+                "actions": "102"
             },
             "cut off relative decline van der waals":
             {
                 "value": "0",
                 "default_value": "0",
                 "documentation": "Cut-off relative decline for the van der Waals force calculation at which the force is set to zero.",
-                "pattern": "99",
+                "pattern": "103",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "99"
+                "actions": "103"
             }
         },
         "spherical particle contact force":
@@ -1127,27 +1166,27 @@
                 "value": "0",
                 "default_value": "0",
                 "documentation": "",
-                "pattern": "100",
+                "pattern": "104",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "100"
+                "actions": "104"
             },
             "sliding friction coefficient":
             {
                 "value": "0",
                 "default_value": "0",
                 "documentation": "",
-                "pattern": "101",
+                "pattern": "105",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "101"
+                "actions": "105"
             },
             "rolling resistance coefficient":
             {
                 "value": "0",
                 "default_value": "0",
                 "documentation": "",
-                "pattern": "102",
+                "pattern": "106",
                 "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                "actions": "102"
+                "actions": "106"
             },
             "particle-particle contact":
             {
@@ -1156,18 +1195,18 @@
                     "value": "0",
                     "default_value": "0",
                     "documentation": "",
-                    "pattern": "103",
+                    "pattern": "107",
                     "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                    "actions": "103"
+                    "actions": "107"
                 },
                 "poisson ratio":
                 {
                     "value": "0",
                     "default_value": "0",
                     "documentation": "",
-                    "pattern": "104",
+                    "pattern": "108",
                     "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-                    "actions": "104"
+                    "actions": "108"
                 }
             }
         }
@@ -1179,27 +1218,27 @@
             "value": "false",
             "default_value": "false",
             "documentation": "Set this parameter to true if profiling should be enabled. It will be automaticallyenabled for verbosity level >=1.",
-            "pattern": "121",
+            "pattern": "125",
             "pattern_description": "[Bool]",
-            "actions": "121"
+            "actions": "125"
         },
         "write time step size":
         {
             "value": "10",
             "default_value": "10",
             "documentation": "Write profiling output every given time step size. If this parameter is set, the specified parameter for write frequency is overwritten.",
-            "pattern": "122",
+            "pattern": "126",
             "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-            "actions": "122"
+            "actions": "126"
         },
         "time type":
         {
             "value": "real",
             "default_value": "real",
             "documentation": "Choose the type of time measure to write profiling information.",
-            "pattern": "123",
+            "pattern": "127",
             "pattern_description": "[Selection real|simulation ]",
-            "actions": "123"
+            "actions": "127"
         }
     },
     "restart":
@@ -1209,54 +1248,54 @@
             "value": "-1",
             "default_value": "-1",
             "documentation": "Set this parameter to any number >= 0 to specify how many restart files should be kept. -1 means no restart save.",
-            "pattern": "124",
+            "pattern": "128",
             "pattern_description": "[Integer range -2147483648...2147483647 (inclusive)]",
-            "actions": "124"
+            "actions": "128"
         },
         "load":
         {
             "value": "-1",
             "default_value": "-1",
             "documentation": "Set this parameter to any number >= 0 to specify which restart file should be loaded. -1 means no restart load.",
-            "pattern": "125",
+            "pattern": "129",
             "pattern_description": "[Integer range -2147483648...2147483647 (inclusive)]",
-            "actions": "125"
+            "actions": "129"
         },
         "write time step size":
         {
             "value": "0",
             "default_value": "0",
             "documentation": "Write restart output every given time step size. If this parameter is set, the specified parameter for write frequency is overwritten.",
-            "pattern": "126",
+            "pattern": "130",
             "pattern_description": "[Double -MAX_DOUBLE...MAX_DOUBLE (inclusive)]",
-            "actions": "126"
+            "actions": "130"
         },
         "time type":
         {
             "value": "real",
             "default_value": "real",
             "documentation": "Choose the type of time measure to write ",
-            "pattern": "127",
+            "pattern": "131",
             "pattern_description": "[Selection real|simulation ]",
-            "actions": "127"
+            "actions": "131"
         },
         "directory":
         {
             "value": "",
             "default_value": "",
             "documentation": "Write restart directory",
-            "pattern": "128",
+            "pattern": "132",
             "pattern_description": "[Anything]",
-            "actions": "128"
+            "actions": "132"
         },
         "prefix":
         {
             "value": "restart",
             "default_value": "restart",
             "documentation": "Write restart prefix",
-            "pattern": "129",
+            "pattern": "133",
             "pattern_description": "[Anything]",
-            "actions": "129"
+            "actions": "133"
         }
     },
     "application":
@@ -1266,9 +1305,9 @@
             "value": "",
             "default_value": "",
             "documentation": "List of comma separated AMR strategies used to determine whether cells should be refined or coarsened. This parameter is only relevant when AMR is enabled.",
-            "pattern": "130",
+            "pattern": "134",
             "pattern_description": "[List of <[Selection indicator|obstacle_surface ]> of length 0...4294967295 (inclusive)]",
-            "actions": "130"
+            "actions": "134"
         }
     }
 }

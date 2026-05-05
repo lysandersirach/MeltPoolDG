@@ -118,6 +118,13 @@ namespace MeltPoolDG::CompressibleFlow
   }
 
   template <int dim, typename number>
+  std::vector<std::complex<number>>
+  CutDGOperation<dim, number>::estimate_jacobian_eigenvalues(const number, const unsigned int) const
+  {
+    AssertThrow(false, dealii::ExcNotImplemented());
+  }
+
+  template <int dim, typename number>
   void
   CutDGOperation<dim, number>::set_boundary_conditions(
     const std::shared_ptr<SimulationCaseBase<dim, number>> &simulation_case,
