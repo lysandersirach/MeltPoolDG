@@ -177,6 +177,18 @@ namespace MeltPoolDG::CompressibleFlow
                             const std::string                                      &operation_name);
 
     /**
+     * Estimate the eigenvalues of the Jacobian matrix. This is currently not implemented and is
+     * only there for compatibility with the type-erased interface in CompressibleFlowOperation.
+     *
+     * @param time_step The current time step size.
+     * @param max_eigenvalues The maximum number of eigenvalues to estimate.
+     * @return A vector of complex eigenvalues.
+     */
+    std::vector<std::complex<number>>
+    estimate_jacobian_eigenvalues(const number       time_step,
+                                  const unsigned int max_eigenvalues = 100) const;
+
+    /**
      * @brief Attach the solution to the passed data out object.
      *
      * All output variables configured in the underlying CompressibleFlowData (via the given input
