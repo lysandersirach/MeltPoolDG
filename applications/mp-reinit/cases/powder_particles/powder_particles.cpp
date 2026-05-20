@@ -199,9 +199,8 @@ namespace MeltPoolDG::Simulation::PowderParticles
   void
   SimulationPowderParticles<dim, number>::set_field_conditions()
   {
-    const number eps =
-      this->parameters.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
-        dealii::GridTools::minimal_cell_diameter(*this->triangulation) / std::sqrt(dim));
+    const number eps = this->parameters.reinit.compute_interface_thickness_parameter_epsilon(
+      dealii::GridTools::minimal_cell_diameter(*this->triangulation) / std::sqrt(dim));
 
     if (particle_case == ParticleCase::two_particles)
       {

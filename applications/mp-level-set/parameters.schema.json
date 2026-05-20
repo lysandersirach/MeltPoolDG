@@ -945,6 +945,27 @@
               "description": "Sets the type of reinitialization model that should be used.",
               "default": "olsson2007"
             },
+            "interface thickness parameter": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "proportional_to_cell_size",
+                    "absolute_value",
+                    "number_of_cells_across_interface"
+                  ],
+                  "description": "Choose the value type of the interface thickness parameter.",
+                  "default": "proportional_to_cell_size"
+                },
+                "val": {
+                  "type": "number",
+                  "description": "Defines the value of the chosen interface thickness parameter type.",
+                  "default": 0.5
+                }
+              },
+              "additionalProperties": false
+            },
             "elliptic": {
               "type": "object",
               "properties": {
@@ -960,27 +981,6 @@
             "geometric": {
               "type": "object",
               "properties": {
-                "interface thickness parameter": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "proportional_to_cell_size",
-                        "absolute_value",
-                        "number_of_cells_across_interface"
-                      ],
-                      "description": "Choose the value type of the interface thickness parameter.",
-                      "default": "proportional_to_cell_size"
-                    },
-                    "val": {
-                      "type": "number",
-                      "description": "Defines the value of the chosen interface thickness parameter type.",
-                      "default": 0.5
-                    }
-                  },
-                  "additionalProperties": false
-                },
                 "verbosity": {
                   "type": "integer",
                   "description": "Choose the verbosity level. 0 means silent, 1 means verbose.",
@@ -998,27 +998,6 @@
             "hyperbolic": {
               "type": "object",
               "properties": {
-                "interface thickness parameter": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "proportional_to_cell_size",
-                        "absolute_value",
-                        "number_of_cells_across_interface"
-                      ],
-                      "description": "Choose the value type of the interface thickness parameter.",
-                      "default": "proportional_to_cell_size"
-                    },
-                    "val": {
-                      "type": "number",
-                      "description": "Defines the value of the chosen interface thickness parameter type.",
-                      "default": 0.5
-                    }
-                  },
-                  "additionalProperties": false
-                },
                 "pseudo time stepping": {
                   "type": "object",
                   "properties": {

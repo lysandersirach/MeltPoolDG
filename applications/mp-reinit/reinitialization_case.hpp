@@ -53,8 +53,8 @@ namespace MeltPoolDG::LevelSet
 
       // check input parameters for validity
       reinit.check_input_parameters(normal_vec.linear_solver.do_matrix_free);
-      normal_vec.check_input_parameters(reinit.hyperbolic.interface_thickness_parameter.type);
-      curv.check_input_parameters(reinit.hyperbolic.interface_thickness_parameter.type);
+      normal_vec.check_input_parameters(reinit.interface_thickness_parameter.type);
+      curv.check_input_parameters(reinit.interface_thickness_parameter.type);
       profiling.check_input_parameters(time_stepping.time_step_size);
     }
 

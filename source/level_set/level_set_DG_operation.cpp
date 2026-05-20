@@ -480,7 +480,7 @@ namespace MeltPoolDG::LevelSet
           cell->get_dof_indices(local_dof_indices);
 
           const number epsilon_cell =
-            level_set_data.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
+            level_set_data.reinit.compute_interface_thickness_parameter_epsilon(
               cell->diameter() / std::sqrt(dim) / level_set_data.get_n_subdivisions());
 
           for (unsigned int i = 0; i < dofs_per_cell; ++i)

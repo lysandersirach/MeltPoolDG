@@ -76,11 +76,9 @@
   },
   "level set": {
     "reinitialization": {
-      "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "proportional_to_cell_size",
-          "val": 1.5
-        }
+      "interface thickness parameter": {
+        "type": "proportional_to_cell_size",
+        "val": 1.5
       }
     }
   }

@@ -45,16 +45,16 @@
       "enable": true,
       "type": "olsson2007",
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "proportional_to_cell_size",
-          "val": 2
-        },
         "pseudo time stepping": {
           "max n steps": 5
         },
         "Continuous Galerkin": {
           "implementation": "meltpooldg"
         }
+      },
+      "interface thickness parameter": {
+        "type": "proportional_to_cell_size",
+        "val": 2
       }
     },
     "curvature": {

@@ -114,7 +114,7 @@ namespace MeltPoolDG::LevelSet
      * @param vectors Container receiving pointers to internal vectors.
      */
     void
-    attach_vectors(std::vector<VectorType *> &vectors) override;
+    attach_vectors([[maybe_unused]] std::vector<VectorType *> &vectors) override;
 
     /**
      * @brief Attach output vectors for postprocessing and visualization.

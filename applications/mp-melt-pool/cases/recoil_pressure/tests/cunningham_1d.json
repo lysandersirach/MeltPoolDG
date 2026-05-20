@@ -87,14 +87,14 @@
       },
       "enable": true,
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "absolute_value",
-          "val": 1.171875e-06
-        },
         "pseudo time stepping": {
           "n initial steps": 0,
           "max n steps": 2
         }
+      },
+      "interface thickness parameter": {
+        "type": "absolute_value",
+        "val": 1.171875e-06
       }
     },
     "fe": {

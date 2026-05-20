@@ -57,8 +57,8 @@ namespace MeltPoolDG::LevelSet
                     "If you use a simplex mesh, n_subdivisions for the level set must be 1."));
 
     advec_diff.check_input_parameters();
-    normal_vec.check_input_parameters(reinit.hyperbolic.interface_thickness_parameter.type);
-    curv.check_input_parameters(reinit.hyperbolic.interface_thickness_parameter.type);
+    normal_vec.check_input_parameters(reinit.interface_thickness_parameter.type);
+    curv.check_input_parameters(reinit.interface_thickness_parameter.type);
     reinit.check_input_parameters(normal_vec.linear_solver.do_matrix_free);
   }
 

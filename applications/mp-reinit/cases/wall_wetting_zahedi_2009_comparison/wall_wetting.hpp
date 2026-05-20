@@ -236,7 +236,7 @@ namespace MeltPoolDG::Simulation::WallWetting
       // Compute normal diffusion factor (we consider a static mesh)
       cell_size_min =
         dealii::GridTools::minimal_cell_diameter(*this->triangulation) / std::sqrt(dim);
-      epsilon = this->parameters.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
+      epsilon = this->parameters.reinit.compute_interface_thickness_parameter_epsilon(
         cell_size_min / this->parameters.reinit.fe.get_n_subdivisions());
 
       // Compute time-step and change data value
@@ -248,7 +248,7 @@ namespace MeltPoolDG::Simulation::WallWetting
 
       // Compute normal vector filtering factor and change data value
       gamma = dealii::Utilities::fixed_power<2>(
-        gamma_factor * this->parameters.reinit.hyperbolic.interface_thickness_parameter.value);
+        gamma_factor * this->parameters.reinit.interface_thickness_parameter.value);
       this->parameters.normal_vec.filter_parameter = gamma;
 
       // Initial level-set condition

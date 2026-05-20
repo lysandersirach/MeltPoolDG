@@ -24,12 +24,7 @@
         "do matrix free": true
       },
       "enable": true,
-      "type": "olsson2007",
-      "hyperbolic": {
-        "pseudo time stepping": {
-          "max n steps": 5
-        }
-      }
+      "type": "geometric"
     },
     "curvature": {
       "filter parameter": 0.0

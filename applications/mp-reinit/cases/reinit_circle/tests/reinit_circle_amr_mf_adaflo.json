@@ -36,13 +36,13 @@
     },
     "type": "olsson2007",
     "hyperbolic": {
-      "interface thickness parameter": {
-        "type": "proportional_to_cell_size",
-        "val": 1.5
-      },
       "Continuous Galerkin": {
         "implementation": "adaflo"
       }
+    },
+    "interface thickness parameter": {
+      "type": "proportional_to_cell_size",
+      "val": 1.5
     }
   }
 }

@@ -64,13 +64,13 @@
     "reinitialization": {
       "enable": true,
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "absolute_value",
-          "val": 0.01
-        },
         "pseudo time stepping": {
           "max n steps": 3
         }
+      },
+      "interface thickness parameter": {
+        "type": "absolute_value",
+        "val": 0.01
       }
     },
     "curvature": {

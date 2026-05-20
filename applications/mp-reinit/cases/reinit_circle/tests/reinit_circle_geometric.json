@@ -21,12 +21,12 @@
     },
     "type": "geometric",
     "geometric": {
-      "interface thickness parameter": {
-        "type": "absolute_value",
-        "val": 0.05
-      },
       "max distance": 0.5,
       "verbosity": 1
+    },
+    "interface thickness parameter": {
+      "type": "absolute_value",
+      "val": 0.05
     }
   }
 }

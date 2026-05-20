@@ -254,7 +254,7 @@ namespace MeltPoolDG::LevelSet
           normal_dof_indices_per_block[0], // normal vec @todo
           param.time_stepping,
           param.normal_vec,
-          param.reinit.hyperbolic.interface_thickness_parameter.value,
+          param.reinit.interface_thickness_parameter.value,
           param.reinit.fe.get_n_subdivisions());
         reinit_operation->reinit();
       }

@@ -165,12 +165,12 @@ namespace MeltPoolDG::LevelSet
   template <int dim, typename VectorType>
   SignedDistanceSolver<dim, VectorType>::SignedDistanceSolver(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> background_triangulation,
-    std::shared_ptr<FiniteElement<dim>>                          background_fe,
+    const FiniteElement<dim>                                    &background_fe,
     const double                                                 p_max_distance,
     const double                                                 p_iso_level,
     const double                                                 p_scaling,
     const Verbosity                                              p_verbosity)
-    : dof_handler(*background_triangulation)
+    : dof_handler(std::make_shared<DoFHandler<dim>>(*background_triangulation))
     , fe(background_fe)
     , max_distance(p_max_distance)
     , iso_level(p_iso_level * p_scaling)
@@ -178,10 +178,10 @@ namespace MeltPoolDG::LevelSet
     , verbosity(p_verbosity)
     , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   {
-    AssertThrow(background_fe->degree,
+    AssertThrow(background_fe.degree == 1,
                 ExcMessage("Signed distance solver is only implemented for degree=1"));
 
-    mapping = std::make_shared<MappingQ<dim>>(fe->degree);
+    mapping = std::make_shared<MappingQ<dim>>(fe.degree);
     set_face_opposite_dofs_map();
     set_face_dofs_map();
 
@@ -191,16 +191,44 @@ namespace MeltPoolDG::LevelSet
   }
 
   template <int dim, typename VectorType>
+  SignedDistanceSolver<dim, VectorType>::SignedDistanceSolver(
+    std::shared_ptr<DoFHandler<dim>> background_dof_handler,
+    const double                     p_max_distance,
+    const double                     p_iso_level,
+    const double                     p_scaling,
+    const Verbosity                  p_verbosity)
+    : is_external_dof_handler(true)
+    , dof_handler(background_dof_handler)
+    , fe(background_dof_handler->get_fe())
+    , max_distance(p_max_distance)
+    , iso_level(p_iso_level * p_scaling)
+    , scaling(p_scaling)
+    , verbosity(p_verbosity)
+    , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+  {
+    AssertThrow(fe.degree == 1,
+                ExcMessage("Signed distance solver is only implemented for degree=1"));
+
+    mapping = std::make_shared<MappingQ<dim>>(fe.degree);
+    set_face_opposite_dofs_map();
+    set_face_dofs_map();
+
+    hessian_matrix              = LAPACKFullMatrix<double>(dim, dim);
+    H_x_transformation_jacobian = LAPACKFullMatrix<double>(dim, dim - 1);
+  }
+
+  template <int dim, typename VectorType>
   void
   SignedDistanceSolver<dim, VectorType>::setup_dofs()
   {
-    const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+    const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
 
-    dof_handler.distribute_dofs(*fe);
+    if (not is_external_dof_handler)
+      dof_handler->distribute_dofs(fe);
 
-    locally_owned_dofs    = dof_handler.locally_owned_dofs();
-    locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
-    locally_active_dofs   = DoFTools::extract_locally_active_dofs(dof_handler);
+    locally_owned_dofs    = dof_handler->locally_owned_dofs();
+    locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
+    locally_active_dofs   = DoFTools::extract_locally_active_dofs(*dof_handler);
 
     level_set.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 
@@ -212,7 +240,7 @@ namespace MeltPoolDG::LevelSet
 
     constraints.clear();
     constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+    DoFTools::make_hanging_node_constraints(*dof_handler, constraints);
     constraints.close();
   }
 
@@ -222,12 +250,12 @@ namespace MeltPoolDG::LevelSet
     const DoFHandler<dim> &background_dof_handler,
     const VectorType      &background_level_set_vector)
   {
-    const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+    const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
     VectorType     tmp_local_level_set(locally_owned_dofs, mpi_communicator);
 
     FETools::interpolate(background_dof_handler,
                          background_level_set_vector,
-                         dof_handler,
+                         *dof_handler,
                          constraints,
                          tmp_local_level_set);
 
@@ -251,8 +279,8 @@ namespace MeltPoolDG::LevelSet
     initialize_distance();
 
     reconstruct_interface(*mapping,
-                          dof_handler,
-                          *fe,
+                          *dof_handler,
+                          fe,
                           level_set,
                           iso_level,
                           interface_reconstruction_vertices,
@@ -266,6 +294,7 @@ namespace MeltPoolDG::LevelSet
     conserve_global_volume();
 
     compute_second_neighbors_distance();
+
     compute_signed_distance_from_distance();
 
     update_ghost_values();
@@ -290,14 +319,24 @@ namespace MeltPoolDG::LevelSet
   VectorType &
   SignedDistanceSolver<dim, VectorType>::get_signed_distance()
   {
-    const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
-    VectorType     tmp_local_level_set(locally_owned_dofs, mpi_communicator);
+    return signed_distance_with_ghost;
+    // ALTERNATIVE FROM LETHE:
+    //
+    // const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+    // VectorType     tmp_local_level_set(locally_owned_dofs, mpi_communicator);
 
-    for (auto p : locally_owned_dofs)
-      tmp_local_level_set(p) = signed_distance(p);
+    // for (auto p : locally_owned_dofs)
+    // tmp_local_level_set(p) = signed_distance(p);
 
-    level_set = tmp_local_level_set;
-    return level_set;
+    // level_set = tmp_local_level_set;
+    // return level_set;
+  }
+
+  template <int dim, typename VectorType>
+  const VectorType &
+  SignedDistanceSolver<dim, VectorType>::get_signed_distance() const
+  {
+    return signed_distance_with_ghost;
   }
 
   template <int dim, typename VectorType>
@@ -533,7 +572,7 @@ namespace MeltPoolDG::LevelSet
   SignedDistanceSolver<dim, VectorType>::compute_first_neighbors_distance()
   {
     std::map<types::global_dof_index, Point<dim>> dof_support_points =
-      DoFTools::map_dofs_to_support_points(*mapping, dof_handler);
+      DoFTools::map_dofs_to_support_points(*mapping, *dof_handler);
 
     for (auto &intersected_cell : interface_reconstruction_cells)
       {
@@ -571,9 +610,9 @@ namespace MeltPoolDG::LevelSet
   void
   SignedDistanceSolver<dim, VectorType>::compute_second_neighbors_distance()
   {
-    const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+    const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
 
-    const unsigned int dofs_per_cell             = fe->n_dofs_per_cell();
+    const unsigned int dofs_per_cell             = fe.n_dofs_per_cell();
     unsigned int       faces_per_cell            = (dim == 3 ? 6 : 4);
     unsigned int       n_opposite_dofs_per_faces = (dim == 3 ? 4 : 2);
     unsigned int       n_dofs_per_faces          = (dim == 3 ? 4 : 2);
@@ -607,21 +646,21 @@ namespace MeltPoolDG::LevelSet
     std::vector<int>    outside_check(n_opposite_dofs_per_faces);
 
     std::map<types::global_dof_index, Point<dim>> dof_support_points =
-      DoFTools::map_dofs_to_support_points(*mapping, dof_handler);
+      DoFTools::map_dofs_to_support_points(*mapping, *dof_handler);
 
     FEPointEvaluation<1, dim> fe_point_evaluation(*mapping,
-                                                  *fe,
+                                                  fe,
                                                   update_gradients | update_jacobians);
-    FEPointEvaluation<1, dim> fe_point_evaluation_values_only(*mapping, *fe, update_values);
+    FEPointEvaluation<1, dim> fe_point_evaluation_values_only(*mapping, fe, update_values);
 
     bool change = true;
 
     std::map<unsigned int, std::set<typename DoFHandler<dim>::active_cell_iterator>>
       vertices_to_cell;
-    vertices_cell_mapping(dof_handler, vertices_to_cell);
+    vertices_cell_mapping(*dof_handler, vertices_to_cell);
 
     std::set<typename DoFHandler<dim>::active_cell_iterator> corona_cell;
-    for (const auto &cell : dof_handler.active_cell_iterators())
+    for (const auto &cell : dof_handler->active_cell_iterators())
       if (cell->is_locally_owned())
         {
           const unsigned int cell_index = cell->global_active_cell_index();
@@ -640,7 +679,7 @@ namespace MeltPoolDG::LevelSet
 
         change = false;
 
-        for (const auto &cell : dof_handler.active_cell_iterators())
+        for (const auto &cell : dof_handler->active_cell_iterators())
           if (cell->is_locally_owned())
             {
               cell->get_dof_values(distance_with_ghost,
@@ -792,8 +831,12 @@ namespace MeltPoolDG::LevelSet
                         compute_distance(x_n_to_x_I_real, distance_value_at_x_n);
 
                       constexpr double distance_tol = 1e-8;
-                      if (distance(dof_indices[local_face_opposite_dof]) >
-                          approx_distance + distance_tol)
+
+                      const auto gdof = dof_indices[local_face_opposite_dof];
+
+                      if (distance(gdof) > approx_distance + distance_tol)
+                        // if (distance.locally_owned_elements().is_element(gdof) and
+                        // distance(gdof) > approx_distance + distance_tol)
                         {
                           change                                         = true;
                           distance(dof_indices[local_face_opposite_dof]) = approx_distance;
@@ -806,7 +849,6 @@ namespace MeltPoolDG::LevelSet
         change = Utilities::MPI::logical_or(change, mpi_communicator);
         count += 1;
       }
-
     constraints.distribute(distance);
   }
 
@@ -830,15 +872,15 @@ namespace MeltPoolDG::LevelSet
   SignedDistanceSolver<dim, VectorType>::compute_cell_wise_volume_correction()
   {
     FEPointEvaluation<1, dim> fe_point_evaluation(*mapping,
-                                                  *fe,
+                                                  fe,
                                                   update_jacobians | update_JxW_values);
 
-    const unsigned int dofs_per_cell        = fe->n_dofs_per_cell();
+    const unsigned int dofs_per_cell        = fe.n_dofs_per_cell();
     double             n_cells_per_dofs_inv = (dim == 3 ? 1.0 / 8.0 : 1.0 / 4.0);
 
     volume_correction = 0.0;
 
-    for (const auto &cell : dof_handler.active_cell_iterators())
+    for (const auto &cell : dof_handler->active_cell_iterators())
       if (cell->is_locally_owned())
         {
           const unsigned int cell_index = cell->global_active_cell_index();
@@ -852,7 +894,7 @@ namespace MeltPoolDG::LevelSet
                                cell_level_set_dof_values.end());
 
           const double targeted_cell_volume = compute_cell_wise_volume(
-            fe_point_evaluation, cell, cell_level_set_dof_values, -iso_level, fe->degree + 1);
+            fe_point_evaluation, cell, cell_level_set_dof_values, -iso_level, fe.degree + 1);
 
           Vector<double> cell_dof_values(dofs_per_cell);
           cell->get_dof_values(signed_distance_with_ghost,
@@ -860,7 +902,7 @@ namespace MeltPoolDG::LevelSet
                                cell_dof_values.end());
 
           const double cell_volume = cell->measure();
-          const double cell_size   = compute_cell_diameter<dim>(cell_volume, fe->degree);
+          const double cell_size   = compute_cell_diameter<dim>(cell_volume, fe.degree);
 
           double inside_cell_volume_nm1 = 0.0;
           double inside_cell_volume_n   = 0.0;
@@ -873,7 +915,7 @@ namespace MeltPoolDG::LevelSet
           double eta_np1 = 0.0;
 
           inside_cell_volume_nm1 = compute_cell_wise_volume(
-            fe_point_evaluation, cell, cell_dof_values, eta_nm1, fe->degree + 1);
+            fe_point_evaluation, cell, cell_dof_values, eta_nm1, fe.degree + 1);
           delta_volume_nm1 = targeted_cell_volume - inside_cell_volume_nm1;
 
           const double initial_inside_cell_volume = inside_cell_volume_nm1;
@@ -901,7 +943,7 @@ namespace MeltPoolDG::LevelSet
               ++secant_it;
 
               inside_cell_volume_n = compute_cell_wise_volume(
-                fe_point_evaluation, cell, cell_dof_values, eta_n, fe->degree + 1);
+                fe_point_evaluation, cell, cell_dof_values, eta_n, fe.degree + 1);
 
               delta_volume_n     = targeted_cell_volume - inside_cell_volume_n;
               delta_volume_prime = (delta_volume_n - delta_volume_nm1) / (eta_n - eta_nm1 + tol);
@@ -932,11 +974,11 @@ namespace MeltPoolDG::LevelSet
   void
   SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   {
-    const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+    const MPI_Comm mpi_communicator = dof_handler->get_mpi_communicator();
 
     double global_volume, surface;
     std::tie(global_volume, surface) =
-      integrate_volume_and_surface(dof_handler, *fe, level_set, iso_level);
+      integrate_volume_and_surface(*dof_handler, fe, level_set, iso_level);
 
     double global_volume_nm1         = 0.0;
     double global_volume_n           = 0.0;
@@ -953,7 +995,7 @@ namespace MeltPoolDG::LevelSet
     signed_distance_0.update_ghost_values();
 
     std::tie(global_volume_nm1, surface) =
-      integrate_volume_and_surface(dof_handler, *fe, signed_distance_0, 0.0);
+      integrate_volume_and_surface(*dof_handler, fe, signed_distance_0, 0.0);
 
     global_delta_volume_nm1      = global_volume - global_volume_nm1;
     const double global_volume_0 = global_volume_nm1;
@@ -973,7 +1015,7 @@ namespace MeltPoolDG::LevelSet
         signed_distance_n.update_ghost_values();
 
         std::tie(global_volume_n, surface) =
-          integrate_volume_and_surface(dof_handler, *fe, signed_distance_n, 0.0);
+          integrate_volume_and_surface(*dof_handler, fe, signed_distance_n, 0.0);
 
         global_delta_volume_n = global_volume - global_volume_n;
         global_delta_volume_prime =

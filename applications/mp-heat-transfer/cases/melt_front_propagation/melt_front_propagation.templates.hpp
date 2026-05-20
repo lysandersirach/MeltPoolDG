@@ -370,10 +370,9 @@ namespace MeltPoolDG::Simulation::MeltFrontPropagation
 
     if constexpr (std::is_same_v<CaseClass, MeltPoolCase<dim, number>>)
       {
-        const number eps =
-          this->parameters.ls.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
-            dealii::GridTools::minimal_cell_diameter(*this->triangulation) /
-            this->parameters.ls.get_n_subdivisions() / std::sqrt(dim));
+        const number eps = this->parameters.ls.reinit.compute_interface_thickness_parameter_epsilon(
+          dealii::GridTools::minimal_cell_diameter(*this->triangulation) /
+          this->parameters.ls.get_n_subdivisions() / std::sqrt(dim));
         this->attach_initial_condition(
           std::make_shared<InitialLevelSet<dim, number>>(0.0, LevelSet::LevelSetType::tanh, eps),
           "level_set");

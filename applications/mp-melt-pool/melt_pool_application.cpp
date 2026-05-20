@@ -1751,7 +1751,7 @@ namespace MeltPoolDG
             // region, use the isocontour of the signed distance function d=3ε where the smoothed
             // heaviside function attains 1.
             nearest_point_data.isocontour =
-              ls_data.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
+              ls_data.reinit.compute_interface_thickness_parameter_epsilon(
                 scratch_data->get_min_cell_size(ls_dof_idx)) *
               3.;
             break;
@@ -1927,10 +1927,10 @@ namespace MeltPoolDG
 
         // solution variables
         std::vector<std::vector<number>> ls_gradients(dim, std::vector<number>(quadrature.size()));
-        const number diffusion_length = simulation_case->parameters.ls.reinit.hyperbolic
-                                          .compute_interface_thickness_parameter_epsilon(
-                                            scratch_data->get_min_cell_size() /
-                                            simulation_case->parameters.ls.get_n_subdivisions());
+        const number                     diffusion_length =
+          simulation_case->parameters.ls.reinit.compute_interface_thickness_parameter_epsilon(
+            scratch_data->get_min_cell_size() /
+            simulation_case->parameters.ls.get_n_subdivisions());
 
         std::vector<number> ls_vals(quadrature.size());
 
@@ -2128,10 +2128,9 @@ namespace MeltPoolDG
             std::vector<std::vector<number>> ls_gradients(dim,
                                                           std::vector<number>(quadrature.size()));
             const number                     diffusion_length =
-              simulation_case->parameters.ls.reinit.hyperbolic
-                .compute_interface_thickness_parameter_epsilon(
-                  scratch_data->get_min_cell_size() /
-                  simulation_case->parameters.ls.get_n_subdivisions());
+              simulation_case->parameters.ls.reinit.compute_interface_thickness_parameter_epsilon(
+                scratch_data->get_min_cell_size() /
+                simulation_case->parameters.ls.get_n_subdivisions());
 
             std::vector<number> ls_vals(quadrature.size());
 

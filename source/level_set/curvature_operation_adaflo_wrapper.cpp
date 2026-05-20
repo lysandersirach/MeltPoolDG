@@ -203,8 +203,8 @@ namespace MeltPoolDG::LevelSet
     curv_adaflo_params.dof_index_curvature = curv_dof_idx; //@ todo
     curv_adaflo_params.dof_index_normal    = curv_dof_idx;
     curv_adaflo_params.quad_index          = curv_quad_idx;
-    curv_adaflo_params.epsilon = parameters.reinit.hyperbolic.interface_thickness_parameter.value /
-                                 parameters.get_n_subdivisions();
+    curv_adaflo_params.epsilon =
+      parameters.reinit.interface_thickness_parameter.value / parameters.get_n_subdivisions();
     curv_adaflo_params.approximate_projections = false; //@ todo
     curv_adaflo_params.curvature_correction    = parameters.curv.do_curvature_correction;
     verbosity_level                            = parameters.curv.verbosity_level;

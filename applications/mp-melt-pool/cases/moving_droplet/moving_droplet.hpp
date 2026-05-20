@@ -137,10 +137,9 @@ namespace MeltPoolDG::Simulation::MovingDroplet
     {
       // Here, the initial velocity field depends on the level set function. Thus, the diffuse
       // level set is given in the initial state on purpose.
-      const double eps =
-        this->parameters.ls.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
-          dealii::GridTools::minimal_cell_diameter(*this->triangulation) /
-          this->parameters.ls.get_n_subdivisions() / std::sqrt(dim));
+      const double eps = this->parameters.ls.reinit.compute_interface_thickness_parameter_epsilon(
+        dealii::GridTools::minimal_cell_diameter(*this->triangulation) /
+        this->parameters.ls.get_n_subdivisions() / std::sqrt(dim));
 
       AssertThrow(eps > 0, dealii::ExcNotImplemented());
 

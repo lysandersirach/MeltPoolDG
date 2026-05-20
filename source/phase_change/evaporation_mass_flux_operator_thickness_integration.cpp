@@ -76,7 +76,7 @@ namespace MeltPoolDG::Evaporation
         std::vector<unsigned int> global_points_normal_to_interface_pointer;
 
         const auto thickness_integration_band =
-          5 * reinit_data.hyperbolic.compute_interface_thickness_parameter_epsilon(
+          5 * reinit_data.compute_interface_thickness_parameter_epsilon(
                 scratch_data.get_min_cell_size());
 
         Assert(thickness_integration_band > 0.0,

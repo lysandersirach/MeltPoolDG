@@ -16,6 +16,7 @@
 #include <meltpooldg/level_set/curvature_operation_adaflo_wrapper.hpp>
 #include <meltpooldg/level_set/level_set_tools.hpp>
 #include <meltpooldg/level_set/nearest_point.hpp>
+#include <meltpooldg/level_set/reinitialization_geometric_operation.hpp>
 #include <meltpooldg/level_set/reinitialization_hyperbolic_CG_operation.hpp>
 #include <meltpooldg/level_set/reinitialization_olsson_operation_adaflo_wrapper.hpp>
 #include <meltpooldg/level_set/utilities.hpp>
@@ -98,12 +99,11 @@ namespace MeltPoolDG::LevelSet
 
     advec_diff_operation->set_advection_velocity(advection_velocity, vel_dof_idx);
 
-    /*
-     *    initialize the reinit operation
-     */
+    //  initialize the reinit operation
     if (level_set_data.reinit.enable)
       {
-        if (ls.reinit.hyperbolic.cg.implementation == "meltpooldg")
+        if (ls.reinit.modeltype == LevelSet::ModelType::olsson2007 and
+            ls.reinit.hyperbolic.cg.implementation == "meltpooldg")
           {
             reinit_operation = std::make_shared<ReinitializationHyperbolicCGOperation<dim, number>>(
               scratch_data,
@@ -118,7 +118,8 @@ namespace MeltPoolDG::LevelSet
               normal_no_bc_dof_idx_in);
           }
 #ifdef MPDG_ENABLE_ADAFLO
-        else if (ls.reinit.hyperbolic.cg.implementation == "adaflo")
+        else if (ls.reinit.modeltype == LevelSet::ModelType::olsson2007 and
+                 ls.reinit.hyperbolic.cg.implementation == "adaflo")
           {
             reinit_operation = std::make_shared<ReinitializationOlssonOperationAdaflo<dim, number>>(
               scratch_data,
@@ -128,16 +129,19 @@ namespace MeltPoolDG::LevelSet
               normal_dof_indices_per_block_in[0],
               time_stepping_data,
               ls.normal_vec,
-              ls.reinit.hyperbolic.interface_thickness_parameter.value,
+              ls.reinit.interface_thickness_parameter.value,
               ls.get_n_subdivisions());
           }
 #endif
+        else if (ls.reinit.modeltype == LevelSet::ModelType::geometric)
+          {
+            reinit_operation = std::make_shared<ReinitializationGeometricOperation<dim, number>>(
+              scratch_data, ls.reinit, ls_dof_idx, ls_quad_idx_in);
+          }
         else
           AssertThrow(false, ExcNotImplemented());
       }
-    /*
-     *    initialize the curvature operation class
-     */
+    //   initialize the curvature operation class
     if (ls.curv.implementation == "meltpooldg")
       {
         curvature_operation =
@@ -253,17 +257,13 @@ namespace MeltPoolDG::LevelSet
           }
       }
 
-    /*
-     *    compute the localized heaviside function
-     */
+    // compute the localized heaviside function
     transform_level_set_to_smooth_heaviside();
-    /*
-     *    compute the curvature of the initial level set field
-     */
+
+    // compute the curvature of the initial level set field
     curvature_operation->solve();
-    /*
-     *    correct the curvature value far away from the zero level set
-     */
+
+    // correct the curvature value far away from the zero level set
     correct_curvature_values();
   }
 
@@ -291,7 +291,6 @@ namespace MeltPoolDG::LevelSet
   LevelSetOperation<dim, number>::reinit()
   {
     DoFMonitor<number>::add_n_dofs("ls::n_dofs", scratch_data.get_dof_handler(ls_dof_idx).n_dofs());
-
 
     advec_diff_operation->reinit();
     if (reinit_operation)
@@ -349,9 +348,7 @@ namespace MeltPoolDG::LevelSet
   {
     if (not ready_for_time_advance)
       init_time_advance();
-    /*
-     *  1) solve the advection step of the level set function
-     */
+    //  1) solve the advection step of the level set function
     advec_diff_operation->solve(false /*do_finish_time_step; is done as a subsequent step*/);
 
     if (do_finish_time_step)
@@ -363,23 +360,15 @@ namespace MeltPoolDG::LevelSet
   LevelSetOperation<dim, number>::finish_time_advance()
   {
     advec_diff_operation->finish_time_advance();
-    /*
-     *  2) solve the reinitialization problem of the level set equation
-     */
+    // 2) solve the reinitialization problem of the level set equation
     if (reinit_operation)
       do_reinitialization();
 
-    /*
-     *  3) compute the smoothened heaviside function ...
-     */
+    //  3) compute the smoothened heaviside function ...
     transform_level_set_to_smooth_heaviside();
-    /*
-     *    ... the curvature
-     */
+    //    ... the curvature
     curvature_operation->solve();
-    /*
-     *    ... and correct the curvature value far away from the zero level set
-     */
+    //    ... and correct the curvature value far away from the zero level set
     correct_curvature_values();
 
     ready_for_time_advance = false;
@@ -455,9 +444,7 @@ namespace MeltPoolDG::LevelSet
   {
     return surface_mesh_info;
   }
-  /**
-   * register vectors for adaptive mesh refinement
-   */
+
   template <int dim, typename number>
   void
   LevelSetOperation<dim, number>::attach_vectors(
@@ -477,39 +464,22 @@ namespace MeltPoolDG::LevelSet
   void
   LevelSetOperation<dim, number>::attach_output_vectors(GenericDataOut<dim, number> &data_out) const
   {
-    /*
-     * output advected field
-     *
-     * @todo: advected_field duplicates level_set
-     */
+    // @todo: advected_field duplicates level_set
     advec_diff_operation->attach_output_vectors(data_out);
     data_out.add_data_vector(scratch_data.get_dof_handler(ls_dof_idx),
                              get_level_set(),
                              "level_set");
-    /*
-     *  output normal vector field
-     */
+    // output normal vector field
     for (unsigned int d = 0; d < dim; ++d)
       data_out.add_data_vector(scratch_data.get_dof_handler(ls_dof_idx),
                                get_normal_vector().block(d),
                                "normal_" + std::to_string(d));
-    /*
-     *  output curvature
-     *
-     *  @todo: move to operation
-     */
     data_out.add_data_vector(scratch_data.get_dof_handler(ls_dof_idx),
                              get_curvature(),
                              "curvature");
-    /*
-     *  output heaviside
-     */
     data_out.add_data_vector(scratch_data.get_dof_handler(ls_hanging_nodes_dof_idx),
                              level_set_as_heaviside,
                              "heaviside");
-    /*
-     *  output distance function
-     */
     data_out.add_data_vector(scratch_data.get_dof_handler(ls_hanging_nodes_dof_idx),
                              distance_to_level_set,
                              "distance");
@@ -523,87 +493,90 @@ namespace MeltPoolDG::LevelSet
     const ScopedName         scope_n("reinitialization");
     const TimerOutput::Scope scope_t(scratch_data.get_timer(), scope_n);
 
-    // compute the change in the level set since the last reinit
-    VectorType temp;
-    scratch_data.initialize_dof_vector(temp, ls_dof_idx);
-    temp.copy_locally_owned_data_from(get_level_set());
-    temp -= reinit_operation->get_level_set();
-    max_d_level_set_since_last_reinit = temp.linfty_norm();
-
-    // do reinitialization only if the level set has changed more than a certain tolerance
-    if (max_d_level_set_since_last_reinit >
-        level_set_data.reinit.hyperbolic.pseudo_time_stepping.tolerance)
+    if (auto *hyperbolic_reinit =
+          dynamic_cast<ReinitializationHyperbolicOperationCapable<dim, number> *>(
+            reinit_operation.get()))
       {
-        if (level_set_data.reinit.hyperbolic.pseudo_time_stepping.pseudo_time_step_size <= 0.0)
-          // Compute time increment for reinitialization from epsilon
-          reinit_time_iterator.set_current_time_increment(
-            level_set_data.reinit.hyperbolic.pseudo_time_stepping.pseudo_time_step_factor *
-            level_set_data.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
-              scratch_data.get_min_cell_size() / level_set_data.get_n_subdivisions()));
+        // compute the change in the level set since the last reinit
+        VectorType temp;
+        scratch_data.initialize_dof_vector(temp, ls_dof_idx);
+        temp.copy_locally_owned_data_from(get_level_set());
+        temp -= reinit_operation->get_level_set();
+        max_d_level_set_since_last_reinit = temp.linfty_norm();
 
-        reinit_operation->set_initial_condition(get_level_set());
-
-        Journal::print_decoration_line(scratch_data.get_pcout(1));
-        while (!reinit_time_iterator.is_finished())
+        // do reinitialization only if the level set has changed more than a certain tolerance
+        if (max_d_level_set_since_last_reinit >
+            level_set_data.reinit.hyperbolic.pseudo_time_stepping.tolerance)
           {
-            reinit_time_iterator.compute_next_time_increment();
+            if (level_set_data.reinit.hyperbolic.pseudo_time_stepping.pseudo_time_step_size <= 0.0)
+              // Compute time increment for reinitialization from epsilon
+              reinit_time_iterator.set_current_time_increment(
+                level_set_data.reinit.hyperbolic.pseudo_time_stepping.pseudo_time_step_factor *
+                level_set_data.reinit.compute_interface_thickness_parameter_epsilon(
+                  scratch_data.get_min_cell_size() / level_set_data.get_n_subdivisions()));
 
-            std::ostringstream str;
-            str << " τ = " << std::setw(10) << std::left << reinit_time_iterator.get_current_time();
-            Journal::print_line(scratch_data.get_pcout(1), str.str(), "reinitialization", 1);
+            reinit_operation->set_initial_condition(get_level_set());
 
-            reinit_operation->solve();
-
-            // Check how much the level set changed due to reinitialization
-            if (auto *hyperbolic_reinit =
-                  dynamic_cast<ReinitializationHyperbolicOperationCapable<dim, number> *>(
-                    reinit_operation.get()))
+            Journal::print_decoration_line(scratch_data.get_pcout(1));
+            while (!reinit_time_iterator.is_finished())
               {
+                reinit_time_iterator.compute_next_time_increment();
+
+                std::ostringstream str;
+                str << " τ = " << std::setw(10) << std::left
+                    << reinit_time_iterator.get_current_time();
+                Journal::print_line(scratch_data.get_pcout(1), str.str(), "reinitialization", 1);
+
+                reinit_operation->solve();
+
+                // Check how much the level set changed due to reinitialization
                 if (hyperbolic_reinit->get_max_change_level_set() <
                     level_set_data.reinit.hyperbolic.pseudo_time_stepping.tolerance)
                   break;
-              }
-            else
-              {
-                AssertThrow(false, ExcNotImplemented());
-              }
 
-            /*
-             *  reset the solution of the level set field to the reinitialized solution ...
-             */
-            get_level_set().copy_locally_owned_data_from(reinit_operation->get_level_set());
-            /*
-             *  @todo
-             *
-             *  ... and distribute the constraints;
-             *
-             *  Should constraints between advec diff operation
-             *  and reinitialization operation be synched?
-             */
-            // scratch_data.get_constraint(ls_dof_idx).distribute(advec_diff_operation->get_advected_field());
+                // reset the solution of the level set field to the reinitialized solution ...
+                get_level_set().copy_locally_owned_data_from(reinit_operation->get_level_set());
+                /*
+                 *  @todo
+                 *
+                 *  ... and distribute the constraints;
+                 *
+                 *  Should constraints between advec diff operation
+                 *  and reinitialization operation be synched?
+                 */
+                // scratch_data.get_constraint(ls_dof_idx).distribute(advec_diff_operation->get_advected_field());
 
-            // If it is the first reinitialization cycle, the normal vector
-            // field might not be computed very accurately from the initial level set
-            // field. Thus, in this case we update the normal vector in every reinitialization
-            // step.
-            if (update_normal_vector_in_every_cycle)
-              reinit_operation->set_initial_condition(get_level_set());
+                // If it is the first reinitialization cycle, the normal vector
+                // field might not be computed very accurately from the initial level set
+                // field. Thus, in this case we update the normal vector in every reinitialization
+                // step.
+                if (update_normal_vector_in_every_cycle)
+                  reinit_operation->set_initial_condition(get_level_set());
+              }
+            reinit_time_iterator.reset();
+
+            Journal::print_decoration_line(scratch_data.get_pcout(1));
           }
-        // update ghost values of reinitialized solution
-        get_level_set().update_ghost_values();
-
-        reinit_time_iterator.reset();
-
-        Journal::print_decoration_line(scratch_data.get_pcout(1));
+        else
+          {
+            std::ostringstream str;
+            str << " skipped reinit since max(|ΔΦ|) = " << std::setw(10) << std::setprecision(5)
+                << std::scientific << std::left << max_d_level_set_since_last_reinit
+                << " < level_set_data.reinit_tol";
+            Journal::print_line(scratch_data.get_pcout(1), str.str(), "reinitialization", 2);
+          }
       }
     else
       {
-        std::ostringstream str;
-        str << " skipped reinit since max(|ΔΦ|) = " << std::setw(10) << std::setprecision(5)
-            << std::scientific << std::left << max_d_level_set_since_last_reinit
-            << " < level_set_data.reinit_tol";
-        Journal::print_line(scratch_data.get_pcout(1), str.str(), "reinitialization", 2);
+        reinit_operation->set_initial_condition(get_level_set());
+        reinit_operation->solve();
+
+        // reset the solution of the level set field to the reinitialized solution ...
+        get_level_set().copy_locally_owned_data_from(reinit_operation->get_level_set());
       }
+
+    // update ghost values of reinitialized solution
+    get_level_set().update_ghost_values();
   }
 
   template <int dim, typename number>
@@ -643,7 +616,7 @@ namespace MeltPoolDG::LevelSet
             distance_eval.get_function_values(distance_to_level_set, distance_at_q);
 
             const number epsilon_cell =
-              level_set_data.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
+              level_set_data.reinit.compute_interface_thickness_parameter_epsilon(
                 cell->diameter() / std::sqrt(dim) / level_set_data.get_n_subdivisions());
 
             Vector<number> level_set_local(dofs_per_cell);
@@ -696,7 +669,7 @@ namespace MeltPoolDG::LevelSet
           cell->get_dof_indices(local_dof_indices);
 
           const number epsilon_cell =
-            level_set_data.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
+            level_set_data.reinit.compute_interface_thickness_parameter_epsilon(
               cell->diameter() / std::sqrt(dim) / level_set_data.get_n_subdivisions());
 
           for (unsigned int i = 0; i < dofs_per_cell; ++i)

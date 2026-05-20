@@ -36,11 +36,9 @@
       "preconditioner type": "AMG"
     },
     "type": "olsson2007",
-    "hyperbolic": {
-      "interface thickness parameter": {
-        "type": "absolute_value",
-        "val": 0.05
-      }
+    "interface thickness parameter": {
+      "type": "absolute_value",
+      "val": 0.05
     }
   },
   "normal vector": {

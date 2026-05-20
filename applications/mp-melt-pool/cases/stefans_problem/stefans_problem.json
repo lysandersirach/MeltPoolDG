@@ -49,16 +49,16 @@
       "enable": true,
       "type": "olsson2007",
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "absolute_value",
-          "val": 0.01
-        },
         "pseudo time stepping": {
           "max n steps": 5
         },
         "Continuous Galerkin": {
           "implementation": "meltpooldg"
         }
+      },
+      "interface thickness parameter": {
+        "type": "absolute_value",
+        "val": 0.01
       }
     },
     "curvature": {

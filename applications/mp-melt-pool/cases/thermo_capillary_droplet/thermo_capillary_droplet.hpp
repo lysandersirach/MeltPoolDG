@@ -316,10 +316,9 @@ namespace MeltPoolDG::Simulation::ThermoCapillaryDroplet
     void
     set_field_conditions() final
     {
-      const double eps =
-        this->parameters.ls.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
-          dealii::GridTools::minimal_cell_diameter(*this->triangulation) /
-          this->parameters.ls.get_n_subdivisions() / std::sqrt(dim));
+      const double eps = this->parameters.ls.reinit.compute_interface_thickness_parameter_epsilon(
+        dealii::GridTools::minimal_cell_diameter(*this->triangulation) /
+        this->parameters.ls.get_n_subdivisions() / std::sqrt(dim));
 
       this->attach_initial_condition(std::make_shared<InitialValuesLS<dim>>(eps,
                                                                             liquid_phase_outside),

@@ -49,34 +49,8 @@ namespace MeltPoolDG::LevelSet
 
     unsigned int verbosity = 0;
 
-    struct InterfaceThickness
-    {
-      InterfaceThicknessParameterType type =
-        InterfaceThicknessParameterType::proportional_to_cell_size;
-
-      number value = 0.5;
-    } interface_thickness_parameter;
-
     void
     add_parameters(dealii::ParameterHandler &prm);
-
-    template <typename number2>
-    number2
-    compute_interface_thickness_parameter_epsilon(const number2 cell_size) const
-    {
-      switch (interface_thickness_parameter.type)
-        {
-          case InterfaceThicknessParameterType::proportional_to_cell_size:
-            return cell_size * interface_thickness_parameter.value;
-          case InterfaceThicknessParameterType::absolute_value:
-            return interface_thickness_parameter.value;
-          case InterfaceThicknessParameterType::number_of_cells_across_interface:
-            return interface_thickness_parameter.value * cell_size / 6.;
-          default:
-            AssertThrow(false, dealii::ExcNotImplemented());
-            return 0.0;
-        }
-    }
   };
 
 
@@ -91,14 +65,6 @@ namespace MeltPoolDG::LevelSet
       int          n_initial_steps         = -1;
       number       tolerance               = std::numeric_limits<number>::min();
     } pseudo_time_stepping;
-
-    struct InterfaceThickness
-    {
-      InterfaceThicknessParameterType type =
-        InterfaceThicknessParameterType::proportional_to_cell_size;
-
-      number value = 0.5;
-    } interface_thickness_parameter;
 
     struct CG
     {
@@ -144,26 +110,10 @@ namespace MeltPoolDG::LevelSet
     post();
 
     void
-    check_input_parameters(const FiniteElementData        &fe,
-                           const LinearSolverData<number> &linear_solver) const;
-
-    template <typename number2>
-    number2
-    compute_interface_thickness_parameter_epsilon(const number2 cell_size) const
-    {
-      switch (interface_thickness_parameter.type)
-        {
-          case InterfaceThicknessParameterType::proportional_to_cell_size:
-            return cell_size * interface_thickness_parameter.value;
-          case InterfaceThicknessParameterType::absolute_value:
-            return interface_thickness_parameter.value;
-          case InterfaceThicknessParameterType::number_of_cells_across_interface:
-            return interface_thickness_parameter.value * cell_size / 6.;
-          default:
-            AssertThrow(false, dealii::ExcNotImplemented());
-            return 0.0;
-        }
-    }
+    check_input_parameters(
+      const FiniteElementData               &fe,
+      const LinearSolverData<number>        &linear_solver,
+      const InterfaceThicknessParameterType &interface_thickness_parameter_type) const;
   };
 
   template <typename number>
@@ -187,6 +137,14 @@ namespace MeltPoolDG::LevelSet
 
     ReinitializationGeometricData<number> geometric;
 
+    struct InterfaceThickness
+    {
+      InterfaceThicknessParameterType type =
+        InterfaceThicknessParameterType::proportional_to_cell_size;
+
+      number value = 0.5;
+    } interface_thickness_parameter;
+
     void
     add_parameters(dealii::ParameterHandler &prm);
 
@@ -195,5 +153,23 @@ namespace MeltPoolDG::LevelSet
 
     void
     post(const FiniteElementData &base_fe_data);
+
+    template <typename number2>
+    number2
+    compute_interface_thickness_parameter_epsilon(const number2 cell_size) const
+    {
+      switch (interface_thickness_parameter.type)
+        {
+          case InterfaceThicknessParameterType::proportional_to_cell_size:
+            return cell_size * interface_thickness_parameter.value;
+          case InterfaceThicknessParameterType::absolute_value:
+            return interface_thickness_parameter.value;
+          case InterfaceThicknessParameterType::number_of_cells_across_interface:
+            return interface_thickness_parameter.value * cell_size / 6.;
+          default:
+            AssertThrow(false, dealii::ExcNotImplemented());
+            return 0.0;
+        }
+    }
   };
 } // namespace MeltPoolDG::LevelSet

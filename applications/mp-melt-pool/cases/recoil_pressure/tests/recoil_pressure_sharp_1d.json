@@ -73,13 +73,13 @@
   "level set": {
     "reinitialization": {
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "proportional_to_cell_size",
-          "val": 1.5
-        },
         "pseudo time stepping": {
           "n initial steps": 0
         }
+      },
+      "interface thickness parameter": {
+        "type": "proportional_to_cell_size",
+        "val": 1.5
       }
     },
     "curvature": {

@@ -122,14 +122,14 @@
   "level set": {
     "reinitialization": {
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "absolute_value",
-          "val": 1e-05
-        },
         "pseudo time stepping": {
           "n initial steps": 1,
           "max n steps": 0
         }
+      },
+      "interface thickness parameter": {
+        "type": "absolute_value",
+        "val": 1e-05
       }
     },
     "nearest point": {

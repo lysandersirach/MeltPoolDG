@@ -56,14 +56,14 @@
     "reinitialization": {
       "enable": true,
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "proportional_to_cell_size",
-          "val": 2
-        },
         "pseudo time stepping": {
           "n initial steps": 0,
           "max n steps": 0
         }
+      },
+      "interface thickness parameter": {
+        "type": "proportional_to_cell_size",
+        "val": 2
       }
     },
     "curvature": {

@@ -24,31 +24,20 @@ namespace MeltPoolDG::LevelSet
     , reinit_data(reinit_data_in)
     , ls_dof_idx(ls_dof_idx_in)
     , ls_quad_idx(ls_quad_idx_in)
-  {
-    create_solver();
-  }
+  {}
 
   template <int dim, typename number>
   void
   ReinitializationGeometricOperation<dim, number>::create_solver()
   {
-    auto tria_ptr = std::shared_ptr<parallel::DistributedTriangulationBase<dim>>(
-      const_cast<parallel::DistributedTriangulationBase<dim> *>(
-        &dynamic_cast<const parallel::DistributedTriangulationBase<dim> &>(
-          scratch_data.get_dof_handler(ls_dof_idx).get_triangulation())),
-      [](auto *) {});
-
-    auto fe_ptr =
-      std::shared_ptr<FiniteElement<dim>>(const_cast<FiniteElement<dim> *>(
-                                            &scratch_data.get_dof_handler(ls_dof_idx).get_fe()),
-                                          [](auto *) {});
+    auto dof_handler_ptr = std::shared_ptr<DoFHandler<dim>>(
+      const_cast<DoFHandler<dim> *>(&scratch_data.get_dof_handler(ls_dof_idx)), [](auto *) {});
 
     // We assume that the input level set is centered around zero
     const double iso_level = 0.0;
 
     signed_distance_solver =
-      std::make_unique<SignedDistanceSolver<dim>>(tria_ptr,
-                                                  fe_ptr,
+      std::make_unique<SignedDistanceSolver<dim>>(dof_handler_ptr,
                                                   reinit_data.geometric.max_distance,
                                                   iso_level,
                                                   1.0 /*scaling to the level set function*/,
@@ -61,6 +50,9 @@ namespace MeltPoolDG::LevelSet
   void
   ReinitializationGeometricOperation<dim, number>::reinit()
   {
+    if (not signed_distance_solver)
+      create_solver();
+
     scratch_data.initialize_dof_vector(level_set, ls_dof_idx);
     signed_distance_solver->setup_dofs();
   }
@@ -127,7 +119,6 @@ namespace MeltPoolDG::LevelSet
   void
   ReinitializationGeometricOperation<dim, number>::transform_signed_distance_to_tanh_level_set()
   {
-    const bool update_ghosts = !signed_distance_solver->get_signed_distance().has_ghost_elements();
     scratch_data.initialize_dof_vector(level_set, ls_dof_idx);
 
     VectorType multiplicity;
@@ -152,12 +143,12 @@ namespace MeltPoolDG::LevelSet
             cell->get_dof_indices(local_dof_indices);
 
             distance_eval.reinit(cell);
+
             distance_eval.get_function_values(signed_distance_solver->get_signed_distance(),
                                               distance_at_q);
 
-            const number epsilon_cell =
-              reinit_data.geometric.compute_interface_thickness_parameter_epsilon(
-                cell->diameter() / std::sqrt(dim) / reinit_data.fe.get_n_subdivisions());
+            const number epsilon_cell = reinit_data.compute_interface_thickness_parameter_epsilon(
+              cell->diameter() / std::sqrt(dim) / reinit_data.fe.get_n_subdivisions());
 
             Vector<number> level_set_local(dofs_per_cell);
             Vector<number> multiplicity_local(dofs_per_cell);
@@ -169,6 +160,7 @@ namespace MeltPoolDG::LevelSet
                   CharacteristicFunctions::tanh_characteristic_function(distance_at_q[q],
                                                                         epsilon_cell);
               }
+
             scratch_data.get_constraint(ls_dof_idx)
               .distribute_local_to_global(level_set_local, local_dof_indices, level_set);
             scratch_data.get_constraint(ls_dof_idx)
@@ -189,9 +181,6 @@ namespace MeltPoolDG::LevelSet
 
     // update ghost values of solution vector
     level_set.update_ghost_values();
-
-    if (update_ghosts)
-      signed_distance_solver->get_signed_distance().zero_out_ghost_values();
   }
 
   template <int dim, typename number>
@@ -216,8 +205,7 @@ namespace MeltPoolDG::LevelSet
 
   template <int dim, typename number>
   void
-  ReinitializationGeometricOperation<dim, number>::attach_vectors(
-    std::vector<VectorType *> &vectors)
+  ReinitializationGeometricOperation<dim, number>::attach_vectors(std::vector<VectorType *> &)
   {
     // none
   }

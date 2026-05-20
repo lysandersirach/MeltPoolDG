@@ -40,10 +40,6 @@
       "do matrix free": true
     },
     "hyperbolic": {
-      "interface thickness parameter": {
-        "type": "absolute_value",
-        "val": 1e-06
-      },
       "pseudo time stepping": {
         "tolerance": 2.22507e-308
       },
@@ -51,6 +47,10 @@
         "implementation": "meltpooldg",
         "tangential diffusion factor": 0.005
       }
+    },
+    "interface thickness parameter": {
+      "type": "absolute_value",
+      "val": 1e-06
     }
   },
   "normal vector": {

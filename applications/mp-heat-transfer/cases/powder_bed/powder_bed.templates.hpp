@@ -205,16 +205,16 @@ namespace MeltPoolDG::Simulation::PowderBed
         // create a temporary reinit data instance since reinit data is not available for the heat
         // problem
         LevelSet::ReinitializationData<number> reinit_data;
-        reinit_data.hyperbolic.interface_thickness_parameter.type =
+        reinit_data.interface_thickness_parameter.type =
           LevelSet::InterfaceThicknessParameterType::proportional_to_cell_size;
-        reinit_data.hyperbolic.interface_thickness_parameter.value = 1.5;
+        reinit_data.interface_thickness_parameter.value = 1.5;
 
         // attach prescribed heaviside
         this->attach_initial_condition(
           std::make_shared<MeltPool::PowderBedLevelSet<dim, double>>(
             powder_bed_data,
             LevelSet::LevelSetType::smoothed_heaviside,
-            reinit_data.hyperbolic.compute_interface_thickness_parameter_epsilon(
+            reinit_data.compute_interface_thickness_parameter_epsilon(
               dealii::GridTools::minimal_cell_diameter(*this->triangulation) / std::sqrt(dim))),
           "prescribed_heaviside");
       }
@@ -228,7 +228,7 @@ namespace MeltPoolDG::Simulation::PowderBed
           std::make_shared<MeltPool::PowderBedLevelSet<dim, double>>(
             powder_bed_data,
             LevelSet::LevelSetType::signed_distance,
-            mp_case->parameters.ls.reinit.hyperbolic.compute_interface_thickness_parameter_epsilon(
+            mp_case->parameters.ls.reinit.compute_interface_thickness_parameter_epsilon(
               dealii::GridTools::minimal_cell_diameter(*this->triangulation) / std::sqrt(dim))),
           "signed_distance");
 

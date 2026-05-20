@@ -27,16 +27,16 @@
     },
     "type": "olsson2007",
     "hyperbolic": {
-      "interface thickness parameter": {
-        "type": "proportional_to_cell_size",
-        "val": 8
-      },
       "pseudo time stepping": {
         "tolerance": 1e-05
       },
       "Continuous Galerkin": {
         "tangential diffusion factor": 3
       }
+    },
+    "interface thickness parameter": {
+      "type": "proportional_to_cell_size",
+      "val": 8
     }
   },
   "normal vector": {

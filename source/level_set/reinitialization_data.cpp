@@ -26,18 +26,6 @@ namespace MeltPoolDG::LevelSet
   {
     prm.enter_subsection("geometric");
     {
-      prm.enter_subsection("interface thickness parameter");
-      {
-        prm.add_parameter("type",
-                          interface_thickness_parameter.type,
-                          "Choose the value type of the interface thickness parameter.");
-
-        prm.add_parameter("val",
-                          interface_thickness_parameter.value,
-                          "Defines the value of the chosen interface thickness parameter type.");
-      }
-      prm.leave_subsection();
-
       prm.add_parameter("verbosity",
                         verbosity,
                         "Choose the verbosity level. 0 means silent, 1 means verbose.");
@@ -56,18 +44,6 @@ namespace MeltPoolDG::LevelSet
   {
     prm.enter_subsection("hyperbolic");
     {
-      prm.enter_subsection("interface thickness parameter");
-      {
-        prm.add_parameter("type",
-                          interface_thickness_parameter.type,
-                          "Choose the value type of the interface thickness parameter.");
-
-        prm.add_parameter("val",
-                          interface_thickness_parameter.value,
-                          "Defines the value of the chosen interface thickness parameter type.");
-      }
-      prm.leave_subsection();
-
       prm.enter_subsection("pseudo time stepping");
       {
         prm.add_parameter("n initial steps",
@@ -210,17 +186,12 @@ namespace MeltPoolDG::LevelSet
   template <typename number>
   void
   ReinitializationHyperbolicData<number>::check_input_parameters(
-    const FiniteElementData        &fe,
-    const LinearSolverData<number> &linear_solver) const
+    const FiniteElementData               &fe,
+    const LinearSolverData<number>        &linear_solver,
+    const InterfaceThicknessParameterType &interface_thickness_parameter_type) const
   {
     AssertThrow(linear_solver.do_matrix_free or cg.implementation == "meltpooldg",
                 dealii::ExcNotImplemented());
-
-    AssertThrow(interface_thickness_parameter.type ==
-                    InterfaceThicknessParameterType::proportional_to_cell_size or
-                  cg.implementation == "meltpooldg",
-                dealii::ExcMessage("For the adaflo implementation, a variable thickness "
-                                   "parameter epsilon is mandatory."));
 
     // Cross-check for DG since for DG only matrix-free is supported.
     AssertThrow(fe.type != FiniteElementType::FE_DGQ or linear_solver.do_matrix_free,
@@ -228,6 +199,12 @@ namespace MeltPoolDG::LevelSet
 
     AssertThrow(pseudo_time_stepping.pseudo_time_step_factor > 0.0,
                 dealii::ExcMessage("The time step factor must be positive."));
+
+    AssertThrow(interface_thickness_parameter_type ==
+                    InterfaceThicknessParameterType::proportional_to_cell_size or
+                  cg.implementation == "meltpooldg",
+                dealii::ExcMessage("For the adaflo implementation, a variable thickness "
+                                   "parameter epsilon is mandatory."));
   }
 
   template <typename number>
@@ -252,6 +229,18 @@ namespace MeltPoolDG::LevelSet
       prm.add_parameter("type",
                         modeltype,
                         "Sets the type of reinitialization model that should be used.");
+      prm.enter_subsection("interface thickness parameter");
+      {
+        prm.add_parameter("type",
+                          interface_thickness_parameter.type,
+                          "Choose the value type of the interface thickness parameter.");
+
+        prm.add_parameter("val",
+                          interface_thickness_parameter.value,
+                          "Defines the value of the chosen interface thickness parameter type.");
+      }
+      prm.leave_subsection();
+
 
       elliptic.add_parameters(prm);
       geometric.add_parameters(prm);
@@ -282,8 +271,7 @@ namespace MeltPoolDG::LevelSet
                 dealii::ExcMessage("For the reinitialization operation both the normal vector "
                                    "and the reinitialization operation have to be computed "
                                    "either matrix-based or matrix-free."));
-
-    hyperbolic.check_input_parameters(fe, linear_solver);
+    hyperbolic.check_input_parameters(fe, linear_solver, interface_thickness_parameter.type);
     predictor.check_input_parameters();
   }
 

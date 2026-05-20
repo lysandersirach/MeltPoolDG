@@ -40,10 +40,6 @@
         "type": "none"
       },
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "proportional_to_cell_size",
-          "val": 0.5
-        },
         "pseudo time stepping": {
           "n initial steps": 0,
           "max n steps": 10,
@@ -68,6 +64,10 @@
           "IP diffusion": 10,
           "gradient error time derivative threshold": 0.1
         }
+      },
+      "interface thickness parameter": {
+        "type": "proportional_to_cell_size",
+        "val": 0.5
       }
     },
     "normal vector": {

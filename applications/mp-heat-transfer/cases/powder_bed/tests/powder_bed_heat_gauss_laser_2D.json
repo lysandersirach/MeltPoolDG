@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../parameters.schema.json",
   "base": {
     "case name": "powder_bed",
     "dimension": 2,
@@ -54,11 +55,9 @@
   },
   "level set": {
     "reinitialization": {
-      "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "proportional_to_cell_size",
-          "val": 1.5
-        }
+      "interface thickness parameter": {
+        "type": "proportional_to_cell_size",
+        "val": 1.5
       }
     }
   }

@@ -116,14 +116,14 @@
       "enable": true,
       "type": "olsson2007",
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "absolute_value",
-          "val": 2e-06
-        },
         "pseudo time stepping": {
           "n initial steps": 0,
           "max n steps": 2
         }
+      },
+      "interface thickness parameter": {
+        "type": "absolute_value",
+        "val": 2e-06
       }
     },
     "normal vector": {

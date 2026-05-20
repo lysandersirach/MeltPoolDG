@@ -78,13 +78,13 @@
       "enable": true,
       "type": "olsson2007",
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "proportional_to_cell_size",
-          "val": 1.0
-        },
         "pseudo time stepping": {
           "max n steps": 5
         }
+      },
+      "interface thickness parameter": {
+        "type": "proportional_to_cell_size",
+        "val": 1.0
       }
     },
     "curvature": {

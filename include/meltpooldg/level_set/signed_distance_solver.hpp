@@ -669,11 +669,28 @@ namespace MeltPoolDG::LevelSet
      */
     SignedDistanceSolver(
       std::shared_ptr<parallel::DistributedTriangulationBase<dim>> background_triangulation,
-      std::shared_ptr<FiniteElement<dim>>                          background_fe,
+      const FiniteElement<dim>                                    &background_fe,
       const double                                                 p_max_distance,
       const double                                                 p_iso_level,
       const double                                                 p_scaling   = 1.0,
       const Verbosity                                              p_verbosity = Verbosity::quiet);
+
+    /**
+     * @brief Constructor.
+     *
+     * @param[in] background_dof_handler Shared pointer to the DoFHandler
+     * of the domain.
+     * @param[in] p_max_distance Maximum reinitialization distance value.
+     * @param[in] p_iso_level Iso-level before scaling from which the signed
+     * distance is computed.
+     * @param[in] p_scaling Scaling factor applied to the input level-set field.
+     * @param[in] p_verbosity Verbosity level.
+     */
+    SignedDistanceSolver(std::shared_ptr<DoFHandler<dim>> background_dof_handler,
+                         const double                     p_max_distance,
+                         const double                     p_iso_level,
+                         const double                     p_scaling   = 1.0,
+                         const Verbosity                  p_verbosity = Verbosity::quiet);
 
     /**
      * @brief Initialize the degrees of freedom and associated memory.
@@ -726,7 +743,7 @@ namespace MeltPoolDG::LevelSet
     const DoFHandler<dim> &
     get_dof_handler() const
     {
-      return dof_handler;
+      return *dof_handler;
     }
 
     /**
@@ -917,11 +934,13 @@ namespace MeltPoolDG::LevelSet
     {
       return distance + x_n_to_x_I_real.norm();
     }
-
+    /// Flag to indicate whether the DoFHandler is provided externally or built
+    /// by the solver.
+    bool is_external_dof_handler = false;
     /// DoFHandler describing the signed distance problem.
-    DoFHandler<dim> dof_handler;
+    std::shared_ptr<DoFHandler<dim>> dof_handler;
     /// Finite element discretizing the signed distance problem.
-    std::shared_ptr<FiniteElement<dim>> fe;
+    const FiniteElement<dim> &fe;
     /// Mapping between the real and reference spaces.
     std::shared_ptr<MappingQ<dim>> mapping;
 

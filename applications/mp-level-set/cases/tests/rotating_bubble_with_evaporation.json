@@ -40,10 +40,6 @@
       "enable": true,
       "type": "olsson2007",
       "hyperbolic": {
-        "interface thickness parameter": {
-          "type": "absolute_value",
-          "val": 0.03
-        },
         "pseudo time stepping": {
           "n initial steps": 10,
           "max n steps": 2
@@ -51,6 +47,10 @@
         "Continuous Galerkin": {
           "implementation": "meltpooldg"
         }
+      },
+      "interface thickness parameter": {
+        "type": "absolute_value",
+        "val": 0.03
       }
     },
     "curvature": {

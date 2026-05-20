@@ -66,7 +66,7 @@ namespace MeltPoolDG::LevelSet
           normal_dof_indices_per_block[0],
           reinit_quad_idx,
           solution_level_set,
-          reinit_data.hyperbolic.interface_thickness_parameter.value / ls_n_subdivisions);
+          reinit_data.interface_thickness_parameter.value / ls_n_subdivisions);
       }
 #endif
     else

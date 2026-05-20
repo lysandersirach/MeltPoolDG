@@ -20,16 +20,23 @@ import collections.abc
 ##############################################################################
 
 old_parameter_names = [
+    ["level set", "reinitialization", "hyperbolic", "interface thickness parameter"],
+    ["level set", "reinitialization", "geometric", "interface thickness parameter"],
+    ["reinitialization", "hyperbolic", "interface thickness parameter"],
+    ["reinitialization", "geometric", "interface thickness parameter"],
     # ... add old parameter names
     # ["old", "my age"],
 ]
 new_parameter_names = [
+    ["level set", "reinitialization", "interface thickness parameter"],
+    ["level set", "reinitialization", "interface thickness parameter"],
+    ["reinitialization", "interface thickness parameter"],
+    ["reinitialization", "interface thickness parameter"],
     # ... add new parameter names
     # ["new", "new", "my new age"],
 ]
 delete_parameter_names = [
     # ... add parameter names to be deleted
-    ["laser", "do move"],
 ]
 
 new_categories = [
@@ -74,19 +81,27 @@ def delete_nested_item(dataDict, mapList, val):
     del reduce(getitem, mapList[:-1], dataDict)[mapList[-1]]
 
 
-def remove_empty_items(d):
-    final_dict = {}
+def is_empty(value):
+    return value is None or value == "" or value == [] or value == {}
 
-    for a, b in d.items():
-        if b:
-            if isinstance(b, dict):
-                final_dict[a] = remove_empty_items(b)
-            elif isinstance(b, list):
-                final_dict[a] = list(
-                    filter(None, [remove_empty_items(i) for i in b]))
-            else:
-                final_dict[a] = b
-    return final_dict
+
+def remove_empty_items(obj):
+    if isinstance(obj, dict):
+        cleaned = {
+            key: remove_empty_items(value)
+            for key, value in obj.items()
+        }
+        return {
+            key: value
+            for key, value in cleaned.items()
+            if not is_empty(value)
+        }
+
+    if isinstance(obj, list):
+        cleaned = [remove_empty_items(item) for item in obj]
+        return [item for item in cleaned if not is_empty(item)]
+
+    return obj
 
 
 def remove_empty_nested_items(d):
