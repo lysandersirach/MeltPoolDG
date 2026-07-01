@@ -4,6 +4,7 @@
 
 #include <deal.II/matrix_free/matrix_free.h>
 
+#include "meltpooldg/time_integration/explicit_runge_kutta_chebyshev_integrator.hpp"
 #include <meltpooldg/compressible_flow/convective_kernels.hpp>
 #include <meltpooldg/compressible_flow/dg_operator_base.hpp>
 #include <meltpooldg/compressible_flow/kernels_n_species.hpp>
@@ -115,7 +116,7 @@ namespace MeltPoolDG::CompressibleFlow
     OperationScratchData<dim, number> &flow_scratch_data;
 
     /// Time integrator class used for the time integration.
-    TimeIntegration::LowStorageExplicitRungeKuttaIntegrator<number> time_integrator;
+    TimeIntegration::ExplicitRungeKuttaChebyshevIntegrator<number> time_integrator;
 
     /// This pointer may hold an instance of an external fluid force contribution
     /// (e.g., gravity, body forces, or user - defined source terms)
