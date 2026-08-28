@@ -146,6 +146,25 @@ namespace MeltPoolDG::Multiphase
     compute_time_step_size(bool do_print = false) const;
 
     /**
+     * @brief Estimate the eigenvalues of the Jacobian matrix.
+     *
+     * @param time_step The current time step size.
+     * @param max_eigenvalues The maximum number of eigenvalues to estimate.
+     * @return A vector of complex eigenvalues.
+     *
+     * @throw Eigenvalue computation is currently not supported for the multiphase application.
+     */
+    std::vector<std::complex<number>>
+    estimate_jacobian_eigenvalues(const number /*time_step*/) const
+    {
+      AssertThrow(false,
+                dealii::ExcMessage(
+                  "Eigenvalue estimation is not implemented for "
+                  "CompressibleMultiphaseOperation."));
+      return {};
+    }
+
+    /**
      * @brief Distribute dofs needed for a finite element type given in @p CompressibleFlowData.
      *
      * A FECollection is created to distinguish between liquid phase, gas phase and intersected
